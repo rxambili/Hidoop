@@ -20,4 +20,7 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 		
 	}
 
+	public static void main(String args[]) {
+
+	}
 }
