@@ -1,5 +1,7 @@
 package formats;
 
+import java.io.Serializable;
+
 public class FormatImpl implements Format {
 
 	private Format.Type type;
@@ -18,6 +20,16 @@ public class FormatImpl implements Format {
   		// A FAIRE
 		
   	}
+	
+	public KV read() {
+		// A FAIRE
+		
+	}
+	
+	public void write(KV record) {
+		// A FAIRE
+		
+	}
 	
 	public void close() {
   		// A FAIRE
