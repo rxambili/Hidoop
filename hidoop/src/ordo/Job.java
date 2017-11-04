@@ -9,7 +9,7 @@ import hdfs.HdfsClient;
 
 public class Job implements JobInterface {
 
-	private static final String[] listeMachine = ["yoda.enseeiht.fr"; "vador.enseeiht.fr"; "aragorn.enseeiht.fr"; "gandalf.enseeiht.fr"];
+	private static final String listeMachine[] = {"yoda.enseeiht.fr", "vador.enseeiht.fr", "aragorn.enseeiht.fr", "gandalf.enseeiht.fr"};
 	private int numberOfReduces;
 	private int numberOfMaps;
 	private Format.Type inputFormat;
@@ -105,7 +105,7 @@ public class Job implements JobInterface {
 				CallBack cb = new CallBack();
 				// récupération de l'objet
 			//	Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
-				Daemon daemon = (Daemon) Naming.lookup("//" + listeMachine(i) + ":4000/Daemon"+i);
+				Daemon daemon = (Daemon) Naming.lookup("//" + listeMachine[i] + ":4000/Daemon"+i);
 				// appel de RunMap
 				daemon.runMap(mr, readerCourant, writerCourant, cb);
 			} catch (Exception ex) {
