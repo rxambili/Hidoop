@@ -50,7 +50,9 @@ public class FormatImpl implements Format {
 		try {
 			if (this.type == Format.Type.LINE) {
 				// format ligne
-				kv = new KV(String.valueOf(index), br.readLine());
+				if (br.readLine() != null) {
+					kv = new KV(String.valueOf(index), br.readLine());
+				}
 			} else {
 				// format key-value
 				String ligne = br.readLine();
