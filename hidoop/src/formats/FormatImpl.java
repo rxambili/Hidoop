@@ -1,6 +1,7 @@
 package formats;
 
 import java.io.Serializable;
+import java.io.File;
 
 public class FormatImpl implements Format {
 
@@ -17,13 +18,24 @@ public class FormatImpl implements Format {
   	}
 
  	public void open(OpenMode mode) {
-  		// A FAIRE
-		
+		File fichier = new File(fname);
+		fichier.setExecutable(false);
+		if (mode == R) {
+			// mode lecture
+			fichier.setReadable(true);
+			fichier.setWritable(false);
+		} else {
+			// mode ecriture
+			fichier.setReadable(false);
+			fichier.setWritable(true);
+		}
   	}
 	
 	public KV read() {
-		// A FAIRE
-		
+		KV kv = new KV();
+		kv.k = ""; // "getLine"
+		kv.v = ""; // "getNumberOfLine"
+		return kv;
 	}
 	
 	public void write(KV record) {
