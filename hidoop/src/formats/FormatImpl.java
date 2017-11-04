@@ -2,8 +2,10 @@ package formats;
 
 import java.io.Serializable;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 
@@ -35,25 +37,42 @@ public class FormatImpl implements Format {
 			this.fichier.setReadable(false);
 			this.fichier.setWritable(true);
 		}
-		this.br = new BufferedReader(new FileReader(fichier));
-		this.bw = new BufferedWriter(new FileWriter(fichier));
+		try {
+			this.br = new BufferedReader(new FileReader(fichier));
+			this.bw = new BufferedWriter(new FileWriter(fichier));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
   	}
 	
 	public KV read() {
-		KV kv = new KV(br.readLine(), index.toString());
-		this.index++; // incrementation de index (ligne courante dans le cas de la lecture)
+		KV kv = null;
+		try {
+			kv = new KV(String.valueOf(index), br.readLine());
+			this.index++; // incrementation de index (ligne courante dans le cas de la lecture)
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return kv;
 	}
 	
 	public void write(KV record) {
-		bw.newLine();
-		bw.write(record.k, 0, record.k.length());
-		this.index++; // incrementation de index (nombre de lignes dans le cas de l'ecriture)
+		try {
+			bw.newLine();
+			bw.write(record.k, 0, record.k.length());
+			this.index++; // incrementation de index (nombre de lignes dans le cas de l'ecriture)
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void close() {
-  		br.close();
-		bw.close();
+  		try {
+			br.close();
+			bw.close();
+  		} catch (IOException e) {
+			e.printStackTrace();
+		}
   	}
   
 	public long getIndex() {
