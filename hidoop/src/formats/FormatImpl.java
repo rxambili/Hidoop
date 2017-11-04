@@ -73,6 +73,7 @@ public class FormatImpl implements Format {
 	
 	public void write(KV record) {
 		try {
+			System.out.println(record);
 			bw.write(record.k + KV.SEPARATOR + record.v, 0, record.k.length() + KV.SEPARATOR.length() + record.v.length()); // cle<->valeur
 			bw.newLine();
 			this.index++; // incrementation de index (nombre de lignes dans le cas de l'ecriture)
