@@ -114,7 +114,11 @@ public class Job implements JobInterface {
 		HdfsClient.HdfsRead(outputFname + "-tmp", outputFname + "-tmp");
 		Format readerRes = new FormatImpl(outputFormat, 0, outputFname + "-tmp");
 		Format writerRes = new FormatImpl(outputFormat, 0, outputFname);
+		readerRes.open(Format.OpenMode.R);
+		writerRes.open(Format.OpenMode.W);
 		mr.reduce(readerRes, writerRes);
+		readerRes.close();
+		writerRes.close();
 	}
 
 }
