@@ -59,7 +59,7 @@ public class FormatImpl implements Format {
 	public void write(KV record) {
 		try {
 			bw.newLine();
-			bw.write(record.k + record.SEPARATOR + record.v, 0, record.k.length() + record.v.length() + 3); // clé<->valeur
+			bw.write(record.k + record.SEPARATOR + record.v, 0, record.k.length() + record.SEPARATOR.length() + record.v.length()); // cle<->valeur
 			this.index++; // incrementation de index (nombre de lignes dans le cas de l'ecriture)
 		} catch (IOException e) {
 			e.printStackTrace();
