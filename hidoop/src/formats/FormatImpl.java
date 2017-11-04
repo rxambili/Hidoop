@@ -13,7 +13,7 @@ public class FormatImpl implements Format {
   	private long index;
   	private String fname;
 	
-	private File fichier; // fichier de nom fname
+	private File fichier;      // fichier de nom fname
 	private BufferedReader br; // pour la lecture de fichier
 	private BufferedWriter bw; // pour l'ecriture de fichier
 
@@ -40,16 +40,15 @@ public class FormatImpl implements Format {
   	}
 	
 	public KV read() {
-		KV kv = new KV();
-		kv.k = br.readLine();			
-		kv.v = index.toString();
+		KV kv = new KV(br.readLine(), index.toString());
 		this.index++; // incrementation de index (ligne courante dans le cas de la lecture)
 		return kv;
 	}
 	
 	public void write(KV record) {
-		// A FAIRE
-		
+		bw.newLine();
+		bw.write(record.k, 0, record.k.length());
+		this.index++; // incrementation de index (nombre de lignes dans le cas de l'ecriture)
 	}
 	
 	public void close() {
