@@ -5,6 +5,7 @@ import java.rmi.Naming;
 
 import formats.Format;
 import formats.FormatImpl;
+import hdfs.HdfsClient;
 
 public class Job implements JobInterface {
 
@@ -95,11 +96,11 @@ public class Job implements JobInterface {
 	}*/
 	
 	public void startJob(MapReduce mr) {
-		
-		for (int i=1 ; i<= numberOfMaps; i++) {
+		//HdfsClient.HdfsWrite(inputFormat, inputFname, numberOfMaps);
+		for (int i=1 ; i<=numberOfMaps; i++) {
 			try {
 				Format readerCourant = new FormatImpl(inputFormat, 0, inputFname + "_part" + i);
-				Format writerCourant = new FormatImpl(outputFormat,  0, outputFname + "_tmp" + i);
+				Format writerCourant = new FormatImpl(outputFormat,  0, outputFname + "-tmp_part" + i);
 				CallBack cb = new CallBack();
 				// récupération de l'objet
 				Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
@@ -109,6 +110,11 @@ public class Job implements JobInterface {
 					ex.printStackTrace();
 			}
 		}
+		//quand execution des map sur les machines distantes finies (callbacks)
+		//HdfsClient.HdfsRead(outputFname + "-tmp", outputFname + "-tmp");
+		Format readerRes = new FormatImpl(outputFormat, 0, outputFname + "-tmp");
+		Format writerRes = new FormatImpl(outputFormat, 0, outputFname);
+		mr.reduce(readerRes, writerRes);
 	}
 
 }
