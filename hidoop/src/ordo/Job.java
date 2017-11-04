@@ -95,8 +95,7 @@ public class Job implements JobInterface {
 			// récupération de l'objet
 			Daemon daemon = (Daemon) Naming.lookup(config.getMachine());
 			// appel de RunMap
-			daemon.runMap(mr, reader(i), writer(i), callBack(););
-
+			daemon.runMap(mr, reader(i), writer(i), callBack());
 
 		}
 	}
