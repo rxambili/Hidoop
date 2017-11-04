@@ -111,7 +111,7 @@ public class Job implements JobInterface {
 			}
 		}
 		//quand execution des map sur les machines distantes finies (callbacks)
-		//HdfsClient.HdfsRead(outputFname + "-tmp", outputFname + "-tmp");
+		HdfsClient.HdfsRead(outputFname + "-tmp", outputFname + "-tmp");
 		Format readerRes = new FormatImpl(outputFormat, 0, outputFname + "-tmp");
 		Format writerRes = new FormatImpl(outputFormat, 0, outputFname);
 		mr.reduce(readerRes, writerRes);
