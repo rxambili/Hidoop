@@ -34,7 +34,11 @@ public class FormatImpl implements Format {
 			this.fichier.setWritable(false);
 		} else {
 			// mode ecriture
-			fichier.createNewFile();
+			try {
+				this.fichier.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			this.fichier.setReadable(false);
 			this.fichier.setWritable(true);
 		}
