@@ -19,6 +19,8 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 	public void runMap(Mapper m, Format reader, Format writer, CallBack cb)
 			throws RemoteException {
 		// TODO Auto-generated method stub
+
+        m.map(reader, writer);
 		
 	}
 
