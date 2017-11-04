@@ -93,8 +93,8 @@ public class Job implements JobInterface {
 
 		for (i=0 ; i< config.getLength(); i++) {
 			try {
-				Format readerCourant = new FormatImpl();
-				Format writterCourant = new FormatImpl();
+				Format readerCourant = new FormatImpl(Format.Type.LINE, Format.OpenMode.R, 0, config.getName(i) );
+				Format writterCourant = new FormatImpl(Format.Type.KV, f, Format.OpenMode.W, 0, config.getName(i));
 
 				// récupération de l'objet
 				Daemon daemon = (Daemon) Naming.lookup(config.getMachine());
