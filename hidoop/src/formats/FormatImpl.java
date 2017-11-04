@@ -32,6 +32,11 @@ public class FormatImpl implements Format {
 			// mode lecture
 			this.fichier.setReadable(true);
 			this.fichier.setWritable(false);
+			try {
+				this.br = new BufferedReader(new FileReader(fichier));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else {
 			// mode ecriture
 			try {
@@ -41,12 +46,11 @@ public class FormatImpl implements Format {
 			}
 			this.fichier.setReadable(false);
 			this.fichier.setWritable(true);
-		}
-		try {
-			this.br = new BufferedReader(new FileReader(fichier));
-			this.bw = new BufferedWriter(new FileWriter(fichier));
-		} catch (IOException e) {
-			e.printStackTrace();
+			try {
+				this.bw = new BufferedWriter(new FileWriter(fichier));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
   	}
 	
