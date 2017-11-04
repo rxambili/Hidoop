@@ -92,10 +92,12 @@ public class Job implements JobInterface {
 		// TODO Auto-generated method stub
 
 		for (i=0 ; i< config.getLength(); i++) {
-			// récupération de l'objet
-			Daemon daemon = (Daemon) Naming.lookup(config.getMachine());
-			// appel de RunMap
-			daemon.runMap(mr, reader(i), writer(i), callBack());
+			try {
+				// récupération de l'objet
+				Daemon daemon = (Daemon) Naming.lookup(config.getMachine());
+				// appel de RunMap
+				daemon.runMap(mr, reader(i), writer(i), callBack);
+			}
 
 		}
 	}
