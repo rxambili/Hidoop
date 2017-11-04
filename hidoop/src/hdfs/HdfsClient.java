@@ -3,8 +3,15 @@
 package hdfs;
 import formats.Format;
 import formats.KV;
-//import formats.KVFormat;
-//import formats.LineFormat;
+import formats.KVFormat;
+import formats.LineFormat;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 
 public class HdfsClient {
 
@@ -19,8 +26,34 @@ public class HdfsClient {
     public static void HdfsWrite(Format.Type fmt, String localFSSourceFname, 
      int repFactor) { }
 
-    public static void HdfsRead(String hdfsFname, String localFSDestFname) { 
-    	
+    public static void HdfsRead(String hdfsFname, String localFSDestFname) {
+	try {
+		BufferedWriter bw = new BufferedWriter(new FileWriter(localFSDestFname));
+	} catch (IOException e) {
+			e.printStackTrace();
+	}
+    	for (int i = 1; i < 5; i++) {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(hdfsFname + "_part" + String.valueOf(i)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String line;
+		while ((line = br.readLine()) != null) {
+   			bw.write(line, 0, line.length());
+			bw.newLine();
+		}
+		try {
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	    try {
+		    bw.close();
+	    } catch (IOException e) {
+			e.printStackTrace();
+	    }
     }
 
 	
