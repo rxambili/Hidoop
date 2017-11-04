@@ -95,20 +95,19 @@ public class Job implements JobInterface {
 	}*/
 	
 	public void startJob(MapReduce mr) {
-
+		
 		for (int i=1 ; i<= numberOfMaps; i++) {
 			try {
-				Format readerCourant = new FormatImpl(Format.Type.LINE, Format.OpenMode.R, 0, inputFname + "_part" + i);
-				Format writterCourant = new FormatImpl(Format.Type.KV, Format.OpenMode.W, 0,	outputFname + "_tmp" + i);
+				Format readerCourant = new FormatImpl(inputFormat, 0, inputFname + "_part" + i);
+				Format writerCourant = new FormatImpl(outputFormat,  0, outputFname + "_tmp" + i);
 				CallBack cb = new CallBack();
 				// récupération de l'objet
 				Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
 				// appel de RunMap
-				daemon.runMap(mr, readerCourant, writterCourant, cb);
+				daemon.runMap(mr, readerCourant, writerCourant, cb);
 			} catch (Exception ex) {
 					ex.printStackTrace();
 			}
-
 		}
 	}
 

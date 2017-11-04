@@ -12,15 +12,16 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 
 	protected DaemonImpl() throws RemoteException {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 
 	public void runMap(Mapper m, Format reader, Format writer, CallBack cb)
 			throws RemoteException {
-		// TODO Auto-generated method stub
-
-        m.map(reader, writer);
+		reader.open(Format.OpenMode.R);
+		writer.open(Format.OpenMode.W);
+		m.map(reader, writer);
+		reader.close();
+		writer.close();
 		
 	}
 
