@@ -48,8 +48,16 @@ public class FormatImpl implements Format {
 	public KV read() {
 		KV kv = null;
 		try {
-			kv = new KV(String.valueOf(index), br.readLine());
-			this.index++; // incrementation de index (ligne courante dans le cas de la lecture)
+			if (this.type == Format.Type.LINE) {
+				// format ligne
+				kv = new KV(String.valueOf(index), br.readLine());
+			} else {
+				// format key-value
+				String ligne = br.readLine();
+				String[] parties = ligne.split(kv.SEPARATOR); // separation de la ligne en cle + valeur
+				kv = new KV(parties[0], parties[1]); // parties[0] : cle, parties[1] : valeur
+			}
+				this.index++; // incrementation de index (ligne courante dans le cas de la lecture)
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
