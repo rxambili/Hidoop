@@ -1,7 +1,10 @@
 package ordo;
 
 import map.MapReduce;
+import java.rmi.Naming;
+
 import formats.Format;
+import formats.FormatImpl;
 
 public class Job implements JobInterface {
 
@@ -11,7 +14,14 @@ public class Job implements JobInterface {
 	private Format.Type outputFormat;
 	private String inputFname;
 	private String outputFname;
-	private SortComparator sortComparator;
+	//private SortComparator sortComparator;
+	
+	public Job() {
+		this.numberOfReduces = 1;
+		this.numberOfMaps = 4;
+		this.inputFormat = Format.Type.KV;
+		this.outputFormat = Format.Type.KV;
+	}
 	
 	
 	public void setNumberOfReduces(int tasks) {
@@ -36,17 +46,18 @@ public class Job implements JobInterface {
 	
 	public void setInputFname(String fname) {
 		this.inputFname = fname;
+		this.outputFname = fname + "-res";
 	}
 
 	
-	public void setOutputFname(String fname) {
+	/*public void setOutputFname(String fname) {
 		this.outputFname = fname;
-	}
+	}*/
 
 	
-	public void setSortComparator(SortComparator sc) {
+	/*public void setSortComparator(SortComparator sc) {
 		this.sortComparator = sc;
-	}
+	}*/
 
 	
 	public int getNumberOfReduces() {
@@ -79,27 +90,21 @@ public class Job implements JobInterface {
 	}
 
 	
-	public SortComparator getSortComparator() {
+	/*public SortComparator getSortComparator() {
 		return this.sortComparator;
-	}
-
-
-	private static void callBack() {
-
-	}
+	}*/
 	
 	public void startJob(MapReduce mr) {
-		// TODO Auto-generated method stub
 
-		for (i=0 ; i< config.getLength(); i++) {
+		for (int i=1 ; i<= numberOfMaps; i++) {
 			try {
-				Format readerCourant = new FormatImpl(Format.Type.LINE, Format.OpenMode.R, 0, config.getName(i) );
-				Format writterCourant = new FormatImpl(Format.Type.KV, f, Format.OpenMode.W, 0, config.getName(i));
-
+				Format readerCourant = new FormatImpl(Format.Type.LINE, Format.OpenMode.R, 0, inputFname + "_part" + i);
+				Format writterCourant = new FormatImpl(Format.Type.KV, Format.OpenMode.W, 0,	outputFname + "_tmp" + i);
+				CallBack cb = new CallBack();
 				// récupération de l'objet
-				Daemon daemon = (Daemon) Naming.lookup(config.getMachine());
+				Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
 				// appel de RunMap
-				daemon.runMap(mr, readerCourant, writterCourant, callBack);
+				daemon.runMap(mr, readerCourant, writterCourant, cb);
 			} catch (Exception ex) {
 					ex.printStackTrace();
 			}
