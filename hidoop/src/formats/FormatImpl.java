@@ -44,7 +44,7 @@ public class FormatImpl implements Format {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			this.fichier.setReadable(false);
+			this.fichier.setReadable(true);
 			this.fichier.setWritable(true);
 			try {
 				this.bw = new BufferedWriter(new FileWriter(fichier));
@@ -59,8 +59,9 @@ public class FormatImpl implements Format {
 		try {
 			if (this.type == Format.Type.LINE) {
 				// format ligne
-				if (br.readLine() != null) {
-					kv = new KV(String.valueOf(index), br.readLine());
+				String ligne = br.readLine();
+				if (ligne != null) {
+					kv = new KV(String.valueOf(index), ligne);
 				}
 			} else {
 				// format key-value
@@ -88,8 +89,13 @@ public class FormatImpl implements Format {
 	
 	public void close() {
   		try {
-			br.close();
-			bw.close();
+  			if (br != null){
+				br.close();
+			}
+			if (bw != null){
+				bw.close();
+			}
+
   		} catch (IOException e) {
 			e.printStackTrace();
 		}
