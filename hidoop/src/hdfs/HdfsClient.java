@@ -1,4 +1,4 @@
-/* une PROPOSITION de squelette, incomplÃ¨te et adaptable... */
+/* une PROPOSITION de squelette, incomplète et adaptable... */
 
 package hdfs;
 import formats.Format;
@@ -27,33 +27,39 @@ public class HdfsClient {
      int repFactor) { }
 
     public static void HdfsRead(String hdfsFname, String localFSDestFname) {
-	try {
-		BufferedWriter bw = new BufferedWriter(new FileWriter(localFSDestFname));
-	} catch (IOException e) {
+    	BufferedWriter bw = null;
+    	try {
+    		bw = new BufferedWriter(new FileWriter(localFSDestFname));
+    	} catch (IOException e) {
 			e.printStackTrace();
-	}
-    	for (int i = 1; i < 5; i++) {
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(hdfsFname + "_part" + String.valueOf(i)));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String line;
-		while ((line = br.readLine()) != null) {
-   			bw.write(line, 0, line.length());
-			bw.newLine();
-		}
-		try {
-			br.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	    try {
-		    bw.close();
-	    } catch (IOException e) {
-			e.printStackTrace();
-	    }
+    	}
+    	if ( bw != null) {
+    		for (int i = 1; i < 5; i++) {
+    			BufferedReader br = null;
+    			try {
+    				br = new BufferedReader(new FileReader(hdfsFname + "_part" + String.valueOf(i)));
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    			String line;
+    			if (br != null) {
+    				try {
+    					while ((line = br.readLine()) != null) {
+    						bw.write(line, 0, line.length());
+    						bw.newLine();
+    					}
+    					br.close();
+    				} catch (IOException e) {
+    					e.printStackTrace();
+    				}
+    			}
+    		}
+    		try {
+    			bw.close();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
+    	}
     }
 
 	
