@@ -93,10 +93,15 @@ public class Job implements JobInterface {
 
 		for (i=0 ; i< config.getLength(); i++) {
 			try {
+				Format readerCourant = new FormatImpl();
+				Format writterCourant = new FormatImpl();
+
 				// récupération de l'objet
 				Daemon daemon = (Daemon) Naming.lookup(config.getMachine());
 				// appel de RunMap
-				daemon.runMap(mr, reader(i), writer(i), callBack);
+				daemon.runMap(mr, readerCourant, writterCourant, callBack);
+			} catch (Exception ex) {
+					ex.printStackTrace();
 			}
 
 		}
