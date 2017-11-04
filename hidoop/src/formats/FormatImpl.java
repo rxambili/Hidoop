@@ -54,7 +54,7 @@ public class FormatImpl implements Format {
 			} else {
 				// format key-value
 				String ligne = br.readLine();
-				String[] parties = ligne.split(kv.SEPARATOR); // separation de la ligne en cle + valeur
+				String[] parties = ligne.split(KV.SEPARATOR); // separation de la ligne en cle + valeur
 				kv = new KV(parties[0], parties[1]); // parties[0] : cle, parties[1] : valeur
 			}
 				this.index++; // incrementation de index (ligne courante dans le cas de la lecture)
@@ -66,8 +66,8 @@ public class FormatImpl implements Format {
 	
 	public void write(KV record) {
 		try {
+			bw.write(record.k + KV.SEPARATOR + record.v, 0, record.k.length() + KV.SEPARATOR.length() + record.v.length()); // cle<->valeur
 			bw.newLine();
-			bw.write(record.k + record.SEPARATOR + record.v, 0, record.k.length() + record.SEPARATOR.length() + record.v.length()); // cle<->valeur
 			this.index++; // incrementation de index (nombre de lignes dans le cas de l'ecriture)
 		} catch (IOException e) {
 			e.printStackTrace();
