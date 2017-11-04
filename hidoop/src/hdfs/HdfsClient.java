@@ -1,4 +1,4 @@
-/* une PROPOSITION de squelette, incomplète et adaptable... */
+/* une PROPOSITION de squelette, incomplete et adaptable... */
 
 package hdfs;
 import formats.Format;
