@@ -2,35 +2,37 @@ package formats;
 
 public class FormatImpl implements Format {
 
-  private Format.Type type;
-  private Format.OpenMode openMode;
-  private long index;
-  private String fname;
+	private Format.Type type;
+  	private Format.OpenMode openMode;
+  	private long index;
+  	private String fname;
 
-  public FormatImpl (Format.Type type, Format.OpenMode openMode, long index, String fname) {
-    this.type = type;
-    this.openMode = openMode;
-    this.index = index;
-    this.fname = fname;
-  }
+  	public FormatImpl (Format.Type type, Format.OpenMode openMode, long index, String fname) {
+    		this.type = type;
+    		this.openMode = openMode;
+    		this.index = index;
+    		this.fname = fname;
+  	}
 
-  public void open(OpenMode mode) {
-  
-  }
-  
+ 	public void open(OpenMode mode) {
+  		// A FAIRE
+		
+  	}
+	
 	public void close() {
-  
-  }
+  		// A FAIRE
+		
+  	}
   
 	public long getIndex() {
-    return this.index;
-  }
+    		return this.index;
+  	}
   
 	public String getFname() {
-    return this.fname;
-  }
+   		return this.fname;
+ 	}
   
-  public void setFname(String fname) {
-    this.fname = fname;
-  }
+  	public void setFname(String fname) {
+    		this.fname = fname;
+  	}
 }
