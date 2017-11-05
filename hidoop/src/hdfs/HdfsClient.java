@@ -29,7 +29,11 @@ public class HdfsClient {
     public static void HdfsRead(String hdfsFname, String localFSDestFname) {
     	BufferedWriter bw = null;
     	try {
-    		bw = new BufferedWriter(new FileWriter(localFSDestFname));
+		File fichier = new File(localFSDestFname);
+		fichier.createNewFile();
+		fichier.setReadable(true);
+		fichier.setWritable(true);
+    		bw = new BufferedWriter(new FileWriter(fichier));
     	} catch (IOException e) {
 			e.printStackTrace();
     	}
