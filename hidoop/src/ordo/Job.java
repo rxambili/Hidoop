@@ -124,9 +124,10 @@ public class Job implements JobInterface {
 				Format readerCourant = new FormatImpl(inputFormat, 0, inputFname + "_part" + i);
 				Format writerCourant = new FormatImpl(outputFormat,  0, outputFname + "-tmp_part" + i);
 				CallBack cb = new CallBack();
-				// récupération de l'objet
+
+				//recuperation de l'objet
 				Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
-			//	Daemon daemon = (Daemon) Naming.lookup("//" + listeMachine[i] + ":4000/Daemon"+i);
+				//Daemon daemon = (Daemon) Naming.lookup("//" + listeMachine[i] + ":4000/Daemon"+i);
 				// appel de RunMap
 				daemon.runMap(mr, readerCourant, writerCourant, cb);
 			} catch (Exception ex) {
@@ -143,5 +144,4 @@ public class Job implements JobInterface {
 		readerRes.close();
 		writerRes.close();
 	}
-
 }
