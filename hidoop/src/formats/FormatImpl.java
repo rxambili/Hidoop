@@ -9,23 +9,39 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 
+/**
+ * Classe FormatImpl implémente l'interface Format.
+ * Permet d'ouvrir, lire, écrire ou fermer des fichiers dans les différents formats.
+ * (Le type de format est donné en attribut, une classe par type est envisagée dans le futur).
+ * @author Bonnet, Steux, Xambili
+ *
+ */
 public class FormatImpl implements Format {
 
+	/** Type de format; */
 	private Format.Type type;
+	/** Index. */
   	private long index;
+  	/** Nom du fichier. */
   	private String fname;
 	
 	private File fichier;      // fichier de nom fname
 	private BufferedReader br; // pour la lecture de fichier
 	private BufferedWriter bw; // pour l'ecriture de fichier
 
+	/**
+	 * Constructeur de FormatImpl.
+	 * @param type type de format
+	 * @param index index initial
+	 * @param fname nom du fichier
+	 */
   	public FormatImpl (Format.Type type, long index, String fname) {
     		this.type = type;
     		this.index = index;
     		this.fname = fname;
   	}
 
- 	public void open(OpenMode mode) {
+  	public void open(OpenMode mode) {
 		this.fichier = new File(fname);
 		this.fichier.setExecutable(false);
 		if (mode == Format.OpenMode.R) {
@@ -78,6 +94,10 @@ public class FormatImpl implements Format {
 		return kv;
 	}
 	
+	/**
+	 * Ecrit l'enregistrement du format correspondant à la key-value dans le fichier.
+	 * Actuellement, seul le format KV est géré.
+	 */
 	public void write(KV record) {
 		try {
 			bw.write(record.k + KV.SEPARATOR + record.v, 0, record.k.length() + KV.SEPARATOR.length() + record.v.length()); // cle<->valeur

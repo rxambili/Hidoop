@@ -13,6 +13,12 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 
+/**
+ * Classe HdfsClient.
+ * Implémentation de HdfsRead pour une utilisation en locale afin de tester.
+ * @author Bonnet, Steux, Xambili
+ *
+ */
 public class HdfsClient {
 
     private static void usage() {
@@ -26,6 +32,12 @@ public class HdfsClient {
     public static void HdfsWrite(Format.Type fmt, String localFSSourceFname, 
      int repFactor) { }
 
+    /**
+     * Permet de concaténer les différentes parties (4 parties) d'un fichier.
+     * Implémenter afin de pouvoir tester plus facilement en local.
+     * @param hdfsFname nom du fichier source
+     * @param localFSDestFname nom du fichier destinataire
+     */
     public static void HdfsRead(String hdfsFname, String localFSDestFname) {
     	BufferedWriter bw = null;
     	try {

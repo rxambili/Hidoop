@@ -10,13 +10,25 @@ import java.rmi.server.UnicastRemoteObject;
 import map.Mapper;
 import formats.Format;
 
+/**
+ * Classe DaemonImpl implémente l'interface Daemon.
+ * Cet classe doit être lancée sur chaque machine distante.
+ * @author Bonnet, Steux, Xambili
+ *
+ */
 public class DaemonImpl extends UnicastRemoteObject implements Daemon {
-
+	
+	/**
+	 * Constructeur de DaemonImpl.
+	 * @throws RemoteException
+	 */
 	protected DaemonImpl() throws RemoteException {
 		super();
 	}
 
-
+	/**
+	 * Ouvre/crée les fichiers puis éxécute le map localement avant de fermer les fichiers.
+	 */
 	public void runMap(Mapper m, Format reader, Format writer, CallBack cb)
 			throws RemoteException {
 
@@ -28,6 +40,12 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 		
 	}
 
+	/**
+	 * Méthode principale de la classe DaemonImpl.
+	 * Elle crée le RMI registry sur la machine s'il n'existe pas déjà 
+	 * puis enregistre une instance de DaemonImpl au registry.
+	 * @param args args[0] correspond au numéro du Daemon.
+	 */
 	public static void main(String args[]) {
 		try {
 			Registry registry = LocateRegistry.createRegistry(4000);
