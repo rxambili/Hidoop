@@ -8,9 +8,9 @@ import formats.FormatImpl;
 import hdfs.HdfsClient;
 
 /**
- * Classe Job implémente JobInterface.
+ * Classe Job implï¿½mente JobInterface.
  * Permet de lancer les map/reduce sur les machines distantes
- * (actuellement seulement en local sur la même machine et un seul reduce et 4 maps).
+ * (actuellement seulement en local sur la mï¿½me machine et un seul reduce et 4 maps).
  * @author Bonnet, Steux, Xambili
  *
  */
@@ -21,13 +21,13 @@ public class Job implements JobInterface {
 	private int numberOfReduces;
 	/** Nombre de maps. */
 	private int numberOfMaps;
-	/** Format d'entrée. */
+	/** Format d'entrï¿½e. */
 	private Format.Type inputFormat;
 	/** Format de sortie/ */
 	private Format.Type outputFormat;
 	/** Nom du fichier source. */
 	private String inputFname;
-	/** Nom du fichier résultat. */
+	/** Nom du fichier rï¿½sultat. */
 	private String outputFname;
 	//private SortComparator sortComparator;
 	
@@ -113,12 +113,13 @@ public class Job implements JobInterface {
 	}*/
 	
 	/**
-	 * Permet de lancer les maps sur les machines réparties
-	 * (seulement en locale pour le moment) ainsi que d'éxécuter le reduce.
-	 * Le fichier source doit préalablement être découper en 4 parties.
+	 * Permet de lancer les maps sur les machines rï¿½parties
+	 * (seulement en locale pour le moment) ainsi que d'ï¿½xï¿½cuter le reduce.
+	 * Le fichier source doit prï¿½alablement ï¿½tre dï¿½couper en 4 parties.
 	 */
 	public void startJob(MapReduce mr) {
 		//HdfsClient.HdfsWrite(inputFormat, inputFname, numberOfMaps);
+		RunMapThread t[] = new RunMapThread[numberOfMaps];
 		for (int i=1 ; i<=numberOfMaps; i++) {
 			try {
 				Format readerCourant = new FormatImpl(inputFormat, 0, inputFname + "_part" + i);
@@ -129,9 +130,18 @@ public class Job implements JobInterface {
 				Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
 				//Daemon daemon = (Daemon) Naming.lookup("//" + listeMachine[i] + ":4000/Daemon"+i);
 				// appel de RunMap
-				daemon.runMap(mr, readerCourant, writerCourant, cb);
+				t[i-1] = new RunMapThread(daemon, mr, readerCourant, writerCourant, cb);
+				t[i-1].start();
 			} catch (Exception ex) {
 					ex.printStackTrace();
+			}
+		}
+		for (int i=0 ; i<numberOfMaps; i++) {
+			try {
+				t[i].join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		//quand execution des map sur les machines distantes finies (callbacks)
