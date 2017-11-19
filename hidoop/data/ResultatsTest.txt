@@ -1,0 +1,13 @@
+Quelques Résultats de test : sur une même machine avec 4 Daemon
+
+filesample.txt : 40 lignes
+	-iteratif -> 8 ms
+	-Mapreduce -> 170 ms
+
+filesample2.txt : 40000 lignes
+	-iteratif -> 71 ms
+	-Mapreduce -> 188 ms
+
+filesample3.txt : 4000000 lignes
+	-iteratif -> 1868 ms
+	-Mapreduce -> 1393 ms
