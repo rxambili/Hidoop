@@ -15,7 +15,7 @@ import java.io.BufferedWriter;
 
 /**
  * Classe HdfsClient.
- * Implémentation de HdfsRead pour une utilisation en locale afin de tester.
+ * Implï¿½mentation de HdfsRead pour une utilisation en locale afin de tester.
  * @author Bonnet, Steux, Xambili
  *
  */
@@ -33,8 +33,8 @@ public class HdfsClient {
      int repFactor) { }
 
     /**
-     * Permet de concaténer les différentes parties (4 parties) d'un fichier.
-     * Implémenter afin de pouvoir tester plus facilement en local.
+     * Permet de concatener les differentes parties (4 parties) d'un fichier.
+     * Implementer afin de pouvoir tester plus facilement en local.
      * @param hdfsFname nom du fichier source
      * @param localFSDestFname nom du fichier destinataire
      */

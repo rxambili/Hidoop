@@ -9,7 +9,7 @@ import formats.Format;
 
 /**
  * Interface JobInterface permet de lancer les map/reduce sur les machines distantes
- * (actuellement seulement en local sur la même machine).
+ * (actuellement seulement en local sur la meme machine).
  * @author Bonnet, Steux, Xambili
  *
  */
@@ -27,7 +27,7 @@ public interface JobInterface {
     public void setNumberOfMaps(int tasks);
     
     /**
-     * Modifie le format d'entrée.
+     * Modifie le format d'entree.
      * @param ft nouveau format
      */
     public void setInputFormat(Format.Type ft);
@@ -59,8 +59,8 @@ public interface JobInterface {
     public int getNumberOfMaps();
     
     /**
-     * Retourne le format d'entrée.
-     * @return format d'entrée
+     * Retourne le format d'entree.
+     * @return format d'entree
      */
     public Format.Type getInputFormat();
     
@@ -77,8 +77,8 @@ public interface JobInterface {
     public String getInputFname();
     
     /**
-     * Retourne le nom du fichier résultat
-     * @return nom du fichier résultat
+     * Retourne le nom du fichier resultat
+     * @return nom du fichier resultat
      */
     public String getOutputFname();
 //    public SortComparator getSortComparator();

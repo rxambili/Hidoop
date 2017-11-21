@@ -2,6 +2,8 @@ package ordo;
 
 import map.MapReduce;
 import java.rmi.Naming;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
 import formats.Format;
 import formats.FormatImpl;
@@ -30,6 +32,8 @@ public class Job implements JobInterface {
 	/** Nom du fichier r�sultat. */
 	private String outputFname;
 	//private SortComparator sortComparator;
+
+	private boolean listeFinis[];
 	
 	/**
 	 * Constructeur de Job.
@@ -39,6 +43,9 @@ public class Job implements JobInterface {
 		this.numberOfMaps = 4;
 		this.inputFormat = Format.Type.KV;
 		this.outputFormat = Format.Type.KV;
+		for (int i=1; i<5; i++) {
+			this.listeFinis [i]= false;
+		}
 	}
 	
 	
@@ -124,7 +131,12 @@ public class Job implements JobInterface {
 			try {
 				Format readerCourant = new FormatImpl(inputFormat, 0, inputFname + "_part" + i);
 				Format writerCourant = new FormatImpl(outputFormat,  0, outputFname + "-tmp_part" + i);
-				CallBack cb = new CallBack();
+
+
+				//CallBack cb = new CallBackImpl("//localhost:4000/Daemon"+i);
+				CallBack cb = new CallBackImpl();
+				//CallBack cb = new CallBackImpl(listeMachine[i]);
+				UnicastRemoteObject.exportObject(cb);
 
 				//recuperation de l'objet
 				Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
@@ -132,10 +144,18 @@ public class Job implements JobInterface {
 				// appel de RunMap
 				t[i-1] = new RunMapThread(daemon, mr, readerCourant, writerCourant, cb);
 				t[i-1].start();
+
+				if (cb.estFini()) {
+					listeFinis[i] = true;
+				}
+
 			} catch (Exception ex) {
 					ex.printStackTrace();
 			}
 		}
+
+
+		// à modifier si duplication de machine
 		for (int i=0 ; i<numberOfMaps; i++) {
 			try {
 				t[i].join();

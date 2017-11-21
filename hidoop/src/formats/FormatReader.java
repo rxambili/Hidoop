@@ -2,7 +2,7 @@ package formats;
 
 /**
  * Interface FormatReader.
- * Permet de lire différents formats.
+ * Permet de lire differents formats.
  *
  */
 public interface FormatReader {

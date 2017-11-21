@@ -7,17 +7,17 @@ import map.Mapper;
 import formats.Format;
 
 /**
- * Interface Daemon permettant l'éxécution répartie des maps.
- * Un Daemon doit être lancé sur chaque machine distante (noeud).
+ * Interface Daemon permettant l'execution repartie des maps.
+ * Un Daemon doit etre lance sur chaque machine distante (noeud).
  * @author Bonnet, Steux, Xambili
  *
  */
 public interface Daemon extends Remote {
 	/**
-	 * Exécute le map fourni par l'application.
+	 * Exï¿½cute le map fourni par l'application.
 	 * @param m le map fourni par l'application
 	 * @param reader fragment locale du fichier source
-	 * @param writer fragment locale du résultat
+	 * @param writer fragment locale du resultat
 	 * @param cb callback
 	 * @throws RemoteException
 	 */
