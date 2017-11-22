@@ -19,7 +19,7 @@ import java.util.HashMap;
  */
 public class Job implements JobInterface {
 
-	//private static final String listeMachine[] = {"yoda.enseeiht.fr", "vador.enseeiht.fr", "aragorn.enseeiht.fr", "gandalf.enseeiht.fr"};
+	private static final String listeMachine[] = {"yoda.enseeiht.fr", "vador.enseeiht.fr", "aragorn.enseeiht.fr", "gandalf.enseeiht.fr"};
 	/** Nombre de reduces. */
 	private int numberOfReduces;
 	/** Nombre de maps. */
@@ -133,13 +133,13 @@ public class Job implements JobInterface {
 				Format readerCourant = new FormatImpl(inputFormat, 0, inputFname + "_part" + i);
 				Format writerCourant = new FormatImpl(outputFormat,  0, outputFname + "-tmp_part" + i);
 
-				CallBack cb = new CallBackImpl();
+				CallBack cb = new CallBackImpl(i);
 				listeCallBack.put(i, cb);
 
 
 				//recuperation de l'objet
-				Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
-				//Daemon daemon = (Daemon) Naming.lookup("//" + listeMachine[i] + ":4000/Daemon"+i);
+				//Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
+				Daemon daemon = (Daemon) Naming.lookup("//" + listeMachine[i] + ":4000/Daemon"+i);
 				// appel de RunMap
 				t[i-1] = new RunMapThread(daemon, mr, readerCourant, writerCourant, cb);
 				t[i-1].start();

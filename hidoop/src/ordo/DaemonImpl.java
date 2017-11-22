@@ -52,8 +52,9 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 	public static void main(String args[]) {
 		try {
 			Registry registry = LocateRegistry.createRegistry(4000);
+			System.out.println("Creation du registry sur le port 4000");
 		} catch (RemoteException e1) {
-			e1.printStackTrace();
+			System.out.println("registry deja existant");
 		}
 		try {
 			Daemon daemon = new DaemonImpl();
