@@ -15,7 +15,7 @@ import java.io.BufferedWriter;
 
 /**
  * Classe HdfsClient.
- * Impl�mentation de HdfsRead pour une utilisation en locale afin de tester.
+ * Implementation de HdfsRead pour une utilisation en locale afin de tester.
  * @author Bonnet, Steux, Xambili
  *
  */

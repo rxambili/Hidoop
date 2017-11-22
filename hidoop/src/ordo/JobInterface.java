@@ -1,5 +1,5 @@
 /* une PROPOSITION, SAUF startJob(), setInputFormat(Format.Type ft) et setInputFname(String fname),  qui sont EXIGÉES.
- * tout le reste peut être complété ou adapté
+ * tout le reste peut être complete ou adapte
  */
 
 package ordo;
