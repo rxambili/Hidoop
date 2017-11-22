@@ -8,6 +8,7 @@ import java.rmi.server.UnicastRemoteObject;
 import formats.Format;
 import formats.FormatImpl;
 import hdfs.HdfsClient;
+import java.util.HashMap;
 
 /**
  * Classe Job implemente JobInterface.
@@ -34,6 +35,7 @@ public class Job implements JobInterface {
 	//private SortComparator sortComparator;
 
 	//private boolean listeFinis[];
+	private HashMap<Integer, CallBack> listeCallBack;
 	
 	/**
 	 * Constructeur de Job.
@@ -43,10 +45,8 @@ public class Job implements JobInterface {
 		this.numberOfMaps = 4;
 		this.inputFormat = Format.Type.KV;
 		this.outputFormat = Format.Type.KV;
-		listeFinis = new boolean[4];
-		for (int i=0; i<4; i++) {
-			this.listeFinis [i]= false;
-		}
+		this.listeCallBack = new HashMap<Integer, CallBack>();
+
 	}
 	
 	
@@ -133,13 +133,9 @@ public class Job implements JobInterface {
 				Format readerCourant = new FormatImpl(inputFormat, 0, inputFname + "_part" + i);
 				Format writerCourant = new FormatImpl(outputFormat,  0, outputFname + "-tmp_part" + i);
 
-
-				//CallBack cb = new CallBackImpl("//localhost:4000/Daemon"+i);
 				CallBack cb = new CallBackImpl();
-				//CallBack cb = new CallBackImpl(listeMachine[i]);
-				//UnicastRemoteObject.exportObject(cb);
+				listeCallBack.put(i, cb);
 
-				Naming.rebind("//localhost:4000/Callback" + i, cb);
 
 				//recuperation de l'objet
 				Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
@@ -161,6 +157,13 @@ public class Job implements JobInterface {
 		for (int i=0 ; i<numberOfMaps; i++) {
 			try {
 				t[i].join();
+				try {
+					if (listeCallBack.get(i+1).estFini()) {
+						System.out.println("daemon " + (i+1) + " fini !");
+				     }
+			     }catch (RemoteException e) {
+					System.out.println("remote exception");
+				}
 
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -168,9 +171,6 @@ public class Job implements JobInterface {
 			}
 		}
 
-		for (int i=0; i<4; i++) {
-			System.out.println(listeFinis[i]);
-		}
 
 		//quand execution des map sur les machines distantes finies (callbacks)
 		HdfsClient.HdfsRead(outputFname + "-tmp", outputFname + "-tmp");
