@@ -17,6 +17,6 @@ public interface CallBack extends Remote {
 
     public void addMachineFinished() throws RemoteException;
 
-    public boolean estFini();
+    public boolean estFini() throws RemoteException;
 
 }

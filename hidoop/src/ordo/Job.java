@@ -10,9 +10,9 @@ import formats.FormatImpl;
 import hdfs.HdfsClient;
 
 /**
- * Classe Job impl�mente JobInterface.
+ * Classe Job implemente JobInterface.
  * Permet de lancer les map/reduce sur les machines distantes
- * (actuellement seulement en local sur la m�me machine et un seul reduce et 4 maps).
+ * (actuellement seulement en local sur la meme machine et un seul reduce et 4 maps).
  * @author Bonnet, Steux, Xambili
  *
  */
@@ -23,7 +23,7 @@ public class Job implements JobInterface {
 	private int numberOfReduces;
 	/** Nombre de maps. */
 	private int numberOfMaps;
-	/** Format d'entr�e. */
+	/** Format d'entree. */
 	private Format.Type inputFormat;
 	/** Format de sortie/ */
 	private Format.Type outputFormat;
@@ -33,7 +33,7 @@ public class Job implements JobInterface {
 	private String outputFname;
 	//private SortComparator sortComparator;
 
-	private boolean listeFinis[];
+	//private boolean listeFinis[];
 	
 	/**
 	 * Constructeur de Job.
@@ -43,7 +43,8 @@ public class Job implements JobInterface {
 		this.numberOfMaps = 4;
 		this.inputFormat = Format.Type.KV;
 		this.outputFormat = Format.Type.KV;
-		for (int i=1; i<5; i++) {
+		listeFinis = new boolean[4];
+		for (int i=0; i<4; i++) {
 			this.listeFinis [i]= false;
 		}
 	}
@@ -136,7 +137,9 @@ public class Job implements JobInterface {
 				//CallBack cb = new CallBackImpl("//localhost:4000/Daemon"+i);
 				CallBack cb = new CallBackImpl();
 				//CallBack cb = new CallBackImpl(listeMachine[i]);
-				UnicastRemoteObject.exportObject(cb);
+				//UnicastRemoteObject.exportObject(cb);
+
+				Naming.rebind("//localhost:4000/Callback" + i, cb);
 
 				//recuperation de l'objet
 				Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
@@ -145,9 +148,8 @@ public class Job implements JobInterface {
 				t[i-1] = new RunMapThread(daemon, mr, readerCourant, writerCourant, cb);
 				t[i-1].start();
 
-				if (cb.estFini()) {
-					listeFinis[i] = true;
-				}
+
+
 
 			} catch (Exception ex) {
 					ex.printStackTrace();
@@ -159,11 +161,17 @@ public class Job implements JobInterface {
 		for (int i=0 ; i<numberOfMaps; i++) {
 			try {
 				t[i].join();
+
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+
+		for (int i=0; i<4; i++) {
+			System.out.println(listeFinis[i]);
+		}
+
 		//quand execution des map sur les machines distantes finies (callbacks)
 		HdfsClient.HdfsRead(outputFname + "-tmp", outputFname + "-tmp");
 		Format readerRes = new FormatImpl(outputFormat, 0, outputFname + "-tmp");

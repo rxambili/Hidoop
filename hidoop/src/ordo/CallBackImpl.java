@@ -5,13 +5,13 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 
-public class CallBackImpl implements CallBack {
+public class CallBackImpl extends UnicastRemoteObject implements CallBack {
 
 
     //private String machine;
     boolean fini;
 
-    public void CallBackImpl() {
+    public CallBackImpl() throws  RemoteException{
        // this.machine = m;
         this.fini = false;
     }
@@ -21,7 +21,7 @@ public class CallBackImpl implements CallBack {
         this.fini = true;
     }
 
-    public boolean estFini() {
+    public boolean estFini() throws RemoteException{
         return this.fini;
     }
 
