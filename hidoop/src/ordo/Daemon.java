@@ -14,7 +14,7 @@ import formats.Format;
  */
 public interface Daemon extends Remote {
 	/**
-	 * Ex�cute le map fourni par l'application.
+	 * Execute le map fourni par l'application.
 	 * @param m le map fourni par l'application
 	 * @param reader fragment locale du fichier source
 	 * @param writer fragment locale du resultat

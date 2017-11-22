@@ -19,7 +19,7 @@ import java.util.HashMap;
  */
 public class Job implements JobInterface {
 
-	//private static final String listeMachine[] = {"yoda.enseeiht.fr", "vador.enseeiht.fr", "aragorn.enseeiht.fr", "gandalf.enseeiht.fr"};
+	private static final String listeMachine[] = {"yoda", "vador", "aragorn", "gandalf"};
 	/** Nombre de reduces. */
 	private int numberOfReduces;
 	/** Nombre de maps. */
@@ -30,11 +30,10 @@ public class Job implements JobInterface {
 	private Format.Type outputFormat;
 	/** Nom du fichier source. */
 	private String inputFname;
-	/** Nom du fichier r�sultat. */
+	/** Nom du fichier resultat. */
 	private String outputFname;
 	//private SortComparator sortComparator;
 
-	//private boolean listeFinis[];
 	private HashMap<Integer, CallBack> listeCallBack;
 	
 	/**
@@ -121,9 +120,9 @@ public class Job implements JobInterface {
 	}*/
 	
 	/**
-	 * Permet de lancer les maps sur les machines r�parties
-	 * (seulement en locale pour le moment) ainsi que d'�x�cuter le reduce.
-	 * Le fichier source doit pr�alablement �tre d�couper en 4 parties.
+	 * Permet de lancer les maps sur les machines reparties
+	 * (seulement en locale pour le moment) ainsi que d'executer le reduce.
+	 * Le fichier source doit prealablement etre decouper en 4 parties.
 	 */
 	public void startJob(MapReduce mr) {
 		//HdfsClient.HdfsWrite(inputFormat, inputFname, numberOfMaps);
@@ -138,8 +137,8 @@ public class Job implements JobInterface {
 
 
 				//recuperation de l'objet
-				Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
-				//Daemon daemon = (Daemon) Naming.lookup("//" + listeMachine[i] + ":4000/Daemon"+i);
+				//Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
+				Daemon daemon = (Daemon) Naming.lookup("//" + listeMachine[i-1] + ":4000/Daemon"+i);
 				// appel de RunMap
 				t[i-1] = new RunMapThread(daemon, mr, readerCourant, writerCourant, cb);
 				t[i-1].start();
@@ -153,7 +152,7 @@ public class Job implements JobInterface {
 		}
 
 
-		// à modifier si duplication de machine
+		// a modifier si duplication de machine
 		for (int i=0 ; i<numberOfMaps; i++) {
 			try {
 				t[i].join();

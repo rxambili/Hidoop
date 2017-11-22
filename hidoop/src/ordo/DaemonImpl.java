@@ -11,8 +11,8 @@ import map.Mapper;
 import formats.Format;
 
 /**
- * Classe DaemonImpl impl�mente l'interface Daemon.
- * Cet classe doit �tre lanc�e sur chaque machine distante.
+ * Classe DaemonImpl implemente l'interface Daemon.
+ * Cet classe doit etre lancee sur chaque machine distante.
  * @author Bonnet, Steux, Xambili
  *
  */
@@ -27,7 +27,7 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 	}
 
 	/**
-	 * Ouvre/cr�e les fichiers puis �x�cute le map localement avant de fermer les fichiers.
+	 * Ouvre/cree les fichiers puis execute le map localement avant de fermer les fichiers.
 	 */
 	public void runMap(Mapper m, Format reader, Format writer, CallBack cb)
 			throws RemoteException {
@@ -44,10 +44,10 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 
 
 	/**
-	 * M�thode principale de la classe DaemonImpl.
-	 * Elle cr�e le RMI registry sur la machine s'il n'existe pas d�j� 
+	 * Methode principale de la classe DaemonImpl.
+	 * Elle cree le RMI registry sur la machine s'il n'existe pas deje 
 	 * puis enregistre une instance de DaemonImpl au registry.
-	 * @param args args[0] correspond au num�ro du Daemon.
+	 * @param args args[0] correspond au numero du Daemon.
 	 */
 	public static void main(String args[]) {
 		try {
