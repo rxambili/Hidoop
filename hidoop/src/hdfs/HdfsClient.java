@@ -38,7 +38,7 @@ public class HdfsClient {
      * @param hdfsFname nom du fichier source
      * @param localFSDestFname nom du fichier destinataire
      */
-    public static void HdfsRead(String hdfsFname, String localFSDestFname) {
+    public static void HdfsRead(String hdfsFname, String localFSDestFname, int nbParts) {
     	BufferedWriter bw = null;
     	try {
 		File fichier = new File(localFSDestFname);
@@ -50,7 +50,7 @@ public class HdfsClient {
 			e.printStackTrace();
     	}
     	if ( bw != null) {
-    		for (int i = 1; i < 5; i++) {
+    		for (int i = 1; i <= nbParts; i++) {
     			BufferedReader br = null;
     			try {
     				br = new BufferedReader(new FileReader(hdfsFname + "_part" + String.valueOf(i)));
@@ -86,7 +86,7 @@ public class HdfsClient {
             if (args.length<2) {usage(); return;}
 
             switch (args[0]) {
-              case "read": HdfsRead(args[1],null); break;
+              case "read": HdfsRead(args[1],null,1); break;
               case "delete": HdfsDelete(args[1]); break;
               case "write": 
                 Format.Type fmt;

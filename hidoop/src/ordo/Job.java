@@ -30,7 +30,7 @@ public class Job implements JobInterface {
 
 	//private static final String listeMachine[] = {"yoda.enseeiht.fr", "vador.enseeiht.fr", "aragorn.enseeiht.fr", "gandalf.enseeiht.fr"};
 	private ArrayList<String> daemons;
-	private final static String configDaemons = "config/daemons.txt";
+	private final static String configDaemons = "../config/daemons.txt";
 
 	/** Nombre de reduces. */
 	private int numberOfReduces;
@@ -200,7 +200,7 @@ public class Job implements JobInterface {
 		writerRes.close();
 	}
 	
-	public void initDaemons() throws IOException {
+	private void initDaemons() throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(new File(configDaemons)));
 		this.daemons = new ArrayList<String>();
 	    String line;
