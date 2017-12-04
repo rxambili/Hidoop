@@ -7,6 +7,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
+import map.MapReduce;
 import map.Mapper;
 import formats.Format;
 
@@ -40,6 +41,14 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 
 		// dire au client que c'est fini
 		cb.addMachineFinished();
+	}
+
+	public void runReduce(Format writer, Format reader, CallBack cb, MapReduce mr) {
+		reader.open(Format.OpenMode.R);
+		writer.open(Format.OpenMode.W);
+		mr.reduce(reader, writer);
+		reader.close();
+		writer.close();
 	}
 
 

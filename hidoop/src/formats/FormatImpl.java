@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.util.HashMap;
 
 /**
  * Classe FormatImpl implemente l'interface Format.
@@ -24,6 +25,8 @@ public class FormatImpl implements Format {
   	private long index;
   	/** Nom du fichier. */
   	private String fname;
+  	/** Stockage de node de reduce */
+  	private HashMap<String, String>  nodeReduce;
 	
 	private File fichier;      // fichier de nom fname
 	private BufferedReader br; // pour la lecture de fichier
@@ -39,6 +42,9 @@ public class FormatImpl implements Format {
     		this.type = type;
     		this.index = index;
     		this.fname = fname;
+    		this.nodeReduce = new HashMap<String,String>();
+    		this.nodeReduce.put("am", "//yoda:4000/Daemon");
+		    this.nodeReduce.put("am", "//vador:4000/Daemon");
   	}
 
   	public void open(OpenMode mode) {
