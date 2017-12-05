@@ -35,7 +35,7 @@ public class ReduceInputWriterThread extends Thread {
 			BufferedWriter bw = null;
 			BufferedReader br = null;
 			try {
-				File fichier = new File("imput_KV.txt");
+				File fichier = new File("input_KV.txt");
 				fichier.createNewFile();
 				fichier.setReadable(true);
 				fichier.setWritable(true);

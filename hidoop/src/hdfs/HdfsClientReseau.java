@@ -12,7 +12,7 @@ import java.net.Socket;
 import java.util.ResourceBundle;
 
 import formats.Format;
-import formats.FormatImpl;
+import formats.FormatLocal;
 import formats.KV;
 
 public class HdfsClientReseau {
@@ -101,7 +101,7 @@ public class HdfsClientReseau {
 			ft = Format.Type.KV;
 		}
 
-		FormatImpl fi = new FormatImpl(ft, 1, fname);
+		FormatLocal fi = new FormatLocal(ft, 1, fname);
 
 		/* Ouverture du fichier en lecture */
 		fi.open(Format.OpenMode.R);
@@ -186,7 +186,7 @@ public class HdfsClientReseau {
 	public static void HdfsRead(String fname) {
 
 		/* Création du fichier de concaténation sur le disque local */
-		FormatImpl fi = new FormatImpl(Format.Type.LINE, 1, "localFSDestFname");
+		FormatLocal fi = new FormatLocal(Format.Type.LINE, 1, "localFSDestFname");
 
 		/* Ouverture du format en écriture */
 		fi.open(Format.OpenMode.W);

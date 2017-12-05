@@ -17,7 +17,7 @@ import java.util.HashMap;
  * @author Bonnet, Steux, Xambili
  *
  */
-public class FormatImpl implements Format {
+public class FormatDistant implements Format {
 
 	/** Type de format; */
 	private Format.Type type;
@@ -38,7 +38,7 @@ public class FormatImpl implements Format {
 	 * @param index index initial
 	 * @param fname nom du fichier
 	 */
-  	public FormatImpl (Format.Type type, long index, String fname) {
+  	public FormatDistant (Format.Type type, long index, String fname) {
     		this.type = type;
     		this.index = index;
     		this.fname = fname;

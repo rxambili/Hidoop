@@ -10,7 +10,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 
 import formats.Format;
-import formats.FormatImpl;
+import formats.FormatLocal;
 import hdfs.HdfsClient;
 
 import java.util.ArrayList;
@@ -149,8 +149,8 @@ public class Job implements JobInterface {
 		RunMapThread tm[] = new RunMapThread[numberOfMaps];
 		for (int i=0 ; i<numberOfMaps; i++) {
 			try {
-				Format readerCourant = new FormatImpl(inputFormat, 0, inputFname + "_part" + i);
-				Format writerCourant = new FormatImpl(outputFormat,  0, outputFname + "-tmp_part" + i);
+				Format readerCourant = new FormatLocal(inputFormat, 0, inputFname + "_part" + i);
+				Format writerCourant = new FormatLocal(outputFormat,  0, outputFname + "-tmp_part" + i);
 
 				CallBack cb = new CallBackImpl(i);
 				listeCallBack.put(i, cb);
@@ -183,8 +183,8 @@ public class Job implements JobInterface {
 		RunReduceThread tr[] = new RunReduceThread[numberOfReduces];
 		for (int i=0 ; i<numberOfReduces; i++) {
 			try {
-				Format readerCourant = new FormatImpl(inputFormat, 0, inputFname + "_part" + i);
-				Format writerCourant = new FormatImpl(outputFormat,  0, outputFname + "-tmp_part" + i);
+				Format readerCourant = new FormatLocal(inputFormat, 0, inputFname + "_part" + i);
+				Format writerCourant = new FormatLocal(outputFormat,  0, outputFname + "-tmp_part" + i);
 
 				CallBack cb = new CallBackImpl(i);
 				listeCallBack.put(i, cb);

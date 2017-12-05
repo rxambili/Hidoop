@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 
 import formats.Format;
-import formats.FormatImpl;
+import formats.FormatLocal;
 
 public class HdfsServeur {
 

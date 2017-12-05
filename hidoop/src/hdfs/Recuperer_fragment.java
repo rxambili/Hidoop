@@ -9,16 +9,16 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import formats.FormatImpl;
+import formats.FormatLocal;
 import formats.KV;
 
 public class Recuperer_fragment extends Thread {
 	
 	public Socket socket;
 	public BufferedWriter outFile;
-	public FormatImpl format;
+	public FormatLocal format;
 	
-	public  Recuperer_fragment(Socket s, FormatImpl form) {
+	public  Recuperer_fragment(Socket s, FormatLocal form) {
 		this.socket = s;
 		this.format = form;
 	}
