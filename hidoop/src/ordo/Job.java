@@ -4,12 +4,9 @@ import map.MapReduce;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.rmi.Naming;
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 
 import formats.Format;
 import formats.FormatImpl;
@@ -190,7 +187,7 @@ public class Job implements JobInterface {
 				e.printStackTrace();
 			}
 		}
-		HdfsClient.HdfsRead(outputFname + "-tmp", outputFname + "-tmp");
+		HdfsClient.HdfsRead(outputFname + "-tmp", outputFname + "-tmp", this.numberOfMaps);
 		Format readerRes = new FormatImpl(outputFormat, 0, outputFname + "-tmp");
 		Format writerRes = new FormatImpl(outputFormat, 0, outputFname);
 		readerRes.open(Format.OpenMode.R);
