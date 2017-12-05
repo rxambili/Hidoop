@@ -15,7 +15,7 @@ import java.io.BufferedWriter;
 
 /**
  * Classe HdfsClient.
- * Implementation de HdfsRead pour une utilisation en locale afin de tester.
+ * Implémentation de HdfsRead pour une utilisation en locale afin de tester.
  * @author Bonnet, Steux, Xambili
  *
  */
@@ -33,24 +33,24 @@ public class HdfsClient {
      int repFactor) { }
 
     /**
-     * Permet de concatener les differentes parties (4 parties) d'un fichier.
-     * Implementer afin de pouvoir tester plus facilement en local.
+     * Permet de concaténer les différentes parties (4 parties) d'un fichier.
+     * Implémenter afin de pouvoir tester plus facilement en local.
      * @param hdfsFname nom du fichier source
      * @param localFSDestFname nom du fichier destinataire
      */
-    public static void HdfsRead(String hdfsFname, String localFSDestFname, int nbParts) {
+    public static void HdfsRead(String hdfsFname, String localFSDestFname) {
     	BufferedWriter bw = null;
     	try {
 		File fichier = new File(localFSDestFname);
 		fichier.createNewFile();
 		fichier.setReadable(true);
 		fichier.setWritable(true);
-    	bw = new BufferedWriter(new FileWriter(fichier));
+    		bw = new BufferedWriter(new FileWriter(fichier));
     	} catch (IOException e) {
 			e.printStackTrace();
     	}
     	if ( bw != null) {
-    		for (int i = 1; i <= nbParts; i++) {
+    		for (int i = 1; i < 5; i++) {
     			BufferedReader br = null;
     			try {
     				br = new BufferedReader(new FileReader(hdfsFname + "_part" + String.valueOf(i)));
@@ -86,7 +86,7 @@ public class HdfsClient {
             if (args.length<2) {usage(); return;}
 
             switch (args[0]) {
-              case "read": HdfsRead(args[1],null,1); break;
+              case "read": HdfsRead(args[1],null); break;
               case "delete": HdfsDelete(args[1]); break;
               case "write": 
                 Format.Type fmt;

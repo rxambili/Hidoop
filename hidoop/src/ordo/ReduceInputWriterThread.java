@@ -3,16 +3,16 @@ package ordo;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
+//import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Reader;
+//import java.io.OutputStreamWriter;
+//import java.io.PrintWriter;
+//import java.io.Reader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 //import java.rmi.RemoteException;
 
@@ -20,20 +20,22 @@ public class ReduceInputWriterThread extends Thread {
 	
 	int port;
 	boolean finir;
+	String nom;
 	
-	public ReduceInputWriterThread(int p) {
+	public ReduceInputWriterThread(int p, String n) {
 		this.port = p;
 		this.finir = false;
+		this.nom = n;
 	}
 	
 	public void run() {
 		try {
 			
-			FileInputStream fis = null;
+			//FileInputStream fis = null;
 			BufferedWriter bw = null;
 			BufferedReader br = null;
 			try {
-				File fichier = new File("input_KV.txt");
+				File fichier = new File(nom + "/input_KV.txt");
 				fichier.createNewFile();
 				fichier.setReadable(true);
 				fichier.setWritable(true);
@@ -48,7 +50,7 @@ public class ReduceInputWriterThread extends Thread {
 				ServerSocket s = new ServerSocket(this.port);
 
 				/* Compteur du nombre de connexions effectuée */
-				int compteurCo = 1;
+				//int compteurCo = 1;
 
 				/* Tant qu'il y a des connexions, on les traite */
 				while (true) {
