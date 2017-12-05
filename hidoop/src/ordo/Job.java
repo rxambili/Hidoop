@@ -14,9 +14,8 @@ import formats.FormatDistant;
 import formats.FormatLocal;
 import hdfs.HdfsClient;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Classe Job implemente JobInterface.
@@ -28,9 +27,9 @@ import java.util.List;
 public class Job implements JobInterface {
 
 
-	//private static final String listeMachine[] = {"yoda.enseeiht.fr", "vador.enseeiht.fr", "aragorn.enseeiht.fr", "gandalf.enseeiht.fr"};
-	private List<String> daemonsString;
-	private List<Daemon> daemons;
+	//private static final String ArrayListeMachine[] = {"yoda.enseeiht.fr", "vador.enseeiht.fr", "aragorn.enseeiht.fr", "gandalf.enseeiht.fr"};
+	private ArrayList<String> daemonsString;
+	private ArrayList<Daemon> daemons;
 	private final static String configDaemons = "../config/daemons.txt";
 
 	/** Nombre de reduces. */
@@ -48,7 +47,7 @@ public class Job implements JobInterface {
 	/** Comparateur pour trier. */
 	private SortComparator sortComparator;
 
-	private HashMap<Integer, CallBack> listeCallBack;
+	private HashMap<Integer, CallBack> ArrayListeCallBack;
 	
 	/**
 	 * Constructeur de Job.
@@ -57,7 +56,7 @@ public class Job implements JobInterface {
 		this.numberOfReduces = 2;
 		this.inputFormat = Format.Type.KV;
 		this.outputFormat = Format.Type.KV;
-		this.listeCallBack = new HashMap<Integer, CallBack>();
+		this.ArrayListeCallBack = new HashMap<Integer, CallBack>();
 		try {
 			initDaemons();
 			this.numberOfMaps = daemons.size();
@@ -148,7 +147,9 @@ public class Job implements JobInterface {
 	 */
 	public void startJob(MapReduce mr) {
 		//HdfsClient.HdfsWrite(inputFormat, inputFname, numberOfMaps);
-		List<String> reduceNodes = daemonsString.subList(0, 1);
+		ArrayList<String> reduceNodes = new ArrayList<String>();
+		reduceNodes.add(daemonsString.get(0));
+		reduceNodes.add(daemonsString.get(1));
 		RunMapThread tm[] = new RunMapThread[numberOfMaps];
 		for (int i=0 ; i<numberOfMaps; i++) {
 			try {
@@ -156,7 +157,7 @@ public class Job implements JobInterface {
 				Format writerCourant = new FormatDistant(outputFormat,  0, reduceNodes, sortComparator);
 
 				CallBack cb = new CallBackImpl(i);
-				listeCallBack.put(i, cb);
+				ArrayListeCallBack.put(i, cb);
 
 
 				//recuperation de l'objet
@@ -181,15 +182,15 @@ public class Job implements JobInterface {
 				e.printStackTrace();
 			}
 		}
-		//HdfsClient.HdfsRead(outputFname + Format.SUFFIXE_tmp, outputFname + Format.SUFFIXE_tmp, this.numberOfMaps);
+		
 		RunReduceThread tr[] = new RunReduceThread[numberOfReduces];
 		for (int i=0 ; i<numberOfReduces; i++) {
 			try {
-				Format readerCourant = new FormatLocal(inputFormat, 0, gjd);
+				Format readerCourant = new FormatLocal(inputFormat, 0, "Daemon" + (i+1) + "_input_KV.txt");
 				Format writerCourant = new FormatLocal(outputFormat,  0, outputFname + Format.SUFFIXE_tmp + Format.SUFFIXE_part + i);
 
 				CallBack cb = new CallBackImpl(i);
-				listeCallBack.put(i, cb);
+				ArrayListeCallBack.put(i, cb);
 
 
 				//recuperation de l'objet
@@ -204,6 +205,9 @@ public class Job implements JobInterface {
 					ex.printStackTrace();
 			}
 		}
+		
+		HdfsClient.HdfsRead(outputFname + Format.SUFFIXE_tmp, outputFname, this.numberOfReduces);
+		
 		/*Format readerRes = new FormatImpl(outputFormat, 0, outputFname + Format.SUFFIXE_tmp);
 		Format writerRes = new FormatImpl(outputFormat, 0, outputFname);
 		readerRes.open(Format.OpenMode.R);

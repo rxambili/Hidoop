@@ -12,9 +12,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.ArrayList;
 
 import ordo.SortComparator;
 
@@ -35,9 +34,9 @@ public class FormatDistant implements Format {
   	private String fname;
   	/** Stockage de node de reduce */
   	//private HashMap<String, String>  nodeReduce;
-  	private List<String> nodes;
-  	private List<BufferedWriter> bws;
-  	private List<Socket> sockets;
+  	private ArrayList<String> nodes;
+  	private ArrayList<BufferedWriter> bws;
+  	private ArrayList<Socket> sockets;
   	private SortComparator sc;
 
 	/**
@@ -46,7 +45,7 @@ public class FormatDistant implements Format {
 	 * @param index index initial
 	 * @param fname nom du fichier
 	 */
-  	public FormatDistant (Format.Type type, long index, List<String> daemonsString, SortComparator sc) {
+  	public FormatDistant (Format.Type type, long index, ArrayList<String> daemonsString, SortComparator sc) {
     		this.type = type;
     		this.index = index;
     		this.nodes = daemonsString;
