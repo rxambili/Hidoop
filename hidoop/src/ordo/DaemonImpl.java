@@ -1,5 +1,6 @@
 package ordo;
 
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -67,8 +68,17 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 			System.out.println("registry deja existant");
 		}
 		try {
+			
+			// recuperer hostname
+			//String hostName = null;
+		    //try {
+		    //  final InetAddress addr = InetAddress.getLocalHost();
+		    //  hostName = new String(addr.getHostName());
+		    //} catch(final Exception e) {
+		    //}
+			
 			Daemon daemon = new DaemonImpl();
-			ReduceInputWriterThread t = new ReduceInputWriterThread(4444);
+			ReduceInputWriterThread t = new ReduceInputWriterThread(4444, "Daemon" + args[0] );
 			t.start();
 			Naming.rebind("//localhost:4000/Daemon" + args[0], daemon);
 		} catch (RemoteException | MalformedURLException e) {
@@ -77,3 +87,4 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 			
 	}
 }
+
