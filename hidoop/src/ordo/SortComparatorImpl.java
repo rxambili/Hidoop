@@ -2,7 +2,7 @@
 
 package ordo;
 /**
- * Interface SortComparator (En Construction...)
+ * Classe SortComparatorImpl 
  * @author Bonnet, Steux, Xambili
  *
  */

@@ -102,12 +102,15 @@ public class FormatImpl implements Format {
 	
 	/**
 	 * Ecrit l'enregistrement du format correspondant e la key-value dans le fichier.
-	 * Actuellement, seul le format KV est gere.
 	 */
 	public void write(KV record) {
 		try {
-			bw.write(record.k + KV.SEPARATOR + record.v, 0, record.k.length() + KV.SEPARATOR.length() + record.v.length()); // cle<->valeur
-			bw.newLine();
+			if (this.type == Format.Type.KV) {
+				bw.write(record.k + KV.SEPARATOR + record.v, 0, record.k.length() + KV.SEPARATOR.length() + record.v.length()); // cle<->valeur
+				bw.newLine();
+			} else if (this.type == Format.Type.LINE) {
+				bw.write(record.v);
+			}
 			this.index++; // incrementation de index (nombre de lignes dans le cas de l'ecriture)
 		} catch (IOException e) {
 			e.printStackTrace();

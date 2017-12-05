@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
 
 import formats.Format;
 import formats.FormatImpl;
@@ -26,7 +27,8 @@ public class Job implements JobInterface {
 
 
 	//private static final String listeMachine[] = {"yoda.enseeiht.fr", "vador.enseeiht.fr", "aragorn.enseeiht.fr", "gandalf.enseeiht.fr"};
-	private ArrayList<String> daemons;
+	private ArrayList<String> daemonsString;
+	private ArrayList<Daemon> daemons;
 	private final static String configDaemons = "../config/daemons.txt";
 
 	/** Nombre de reduces. */
@@ -41,7 +43,8 @@ public class Job implements JobInterface {
 	private String inputFname;
 	/** Nom du fichier resultat. */
 	private String outputFname;
-	//private SortComparator sortComparator;
+	/** Comparateur pour trier. */
+	private SortComparator sortComparator;
 
 	private HashMap<Integer, CallBack> listeCallBack;
 	
@@ -49,7 +52,7 @@ public class Job implements JobInterface {
 	 * Constructeur de Job.
 	 */
 	public Job() {
-		this.numberOfReduces = 1;
+		this.numberOfReduces = 2;
 		this.inputFormat = Format.Type.KV;
 		this.outputFormat = Format.Type.KV;
 		this.listeCallBack = new HashMap<Integer, CallBack>();
@@ -57,6 +60,8 @@ public class Job implements JobInterface {
 			initDaemons();
 			this.numberOfMaps = daemons.size();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NotBoundException e) {
 			e.printStackTrace();
 		}
 		
@@ -90,14 +95,14 @@ public class Job implements JobInterface {
 	}
 
 	
-	/*public void setOutputFname(String fname) {
+	public void setOutputFname(String fname) {
 		this.outputFname = fname;
-	}*/
+	}
 
 	
-	/*public void setSortComparator(SortComparator sc) {
+	public void setSortComparator(SortComparator sc) {
 		this.sortComparator = sc;
-	}*/
+	}
 
 	
 	public int getNumberOfReduces() {
@@ -130,9 +135,9 @@ public class Job implements JobInterface {
 	}
 
 	
-	/*public SortComparator getSortComparator() {
+	public SortComparator getSortComparator() {
 		return this.sortComparator;
-	}*/
+	}
 	
 	/**
 	 * Permet de lancer les maps sur les machines reparties
@@ -141,8 +146,8 @@ public class Job implements JobInterface {
 	 */
 	public void startJob(MapReduce mr) {
 		//HdfsClient.HdfsWrite(inputFormat, inputFname, numberOfMaps);
-		RunMapThread t[] = new RunMapThread[numberOfMaps];
-		for (int i=1 ; i<=numberOfMaps; i++) {
+		RunMapThread tm[] = new RunMapThread[numberOfMaps];
+		for (int i=0 ; i<numberOfMaps; i++) {
 			try {
 				Format readerCourant = new FormatImpl(inputFormat, 0, inputFname + "_part" + i);
 				Format writerCourant = new FormatImpl(outputFormat,  0, outputFname + "-tmp_part" + i);
@@ -153,16 +158,11 @@ public class Job implements JobInterface {
 
 				//recuperation de l'objet
 				//Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
-
-
-				Daemon daemon = (Daemon) Naming.lookup("//" + daemons.get(i-1) + ":4000/Daemon"+i);
+				//Daemon daemon = (Daemon) Naming.lookup("//" + daemons.get(i-1) + ":4000/Daemon"+i);
 
 				// appel de RunMap
-				t[i-1] = new RunMapThread(daemon, mr, readerCourant, writerCourant, cb);
-				t[i-1].start();
-
-
-
+				tm[i] = new RunMapThread(daemons.get(i), mr, readerCourant, writerCourant, cb);
+				tm[i].start();
 
 			} catch (Exception ex) {
 					ex.printStackTrace();
@@ -173,36 +173,55 @@ public class Job implements JobInterface {
 		// a modifier si duplication de machine
 		for (int i=0 ; i<numberOfMaps; i++) {
 			try {
-				t[i].join();
-				/*try {
-					if (listeCallBack.get(i+1).estFini()) {
-						System.out.println("daemon " + (i+1) + " fini !");
-				     }
-			     }catch (RemoteException e) {
-					System.out.println("remote exception");
-				}*/
-
+				tm[i].join();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		HdfsClient.HdfsRead(outputFname + "-tmp", outputFname + "-tmp", this.numberOfMaps);
-		Format readerRes = new FormatImpl(outputFormat, 0, outputFname + "-tmp");
+		//HdfsClient.HdfsRead(outputFname + "-tmp", outputFname + "-tmp", this.numberOfMaps);
+		RunReduceThread tr[] = new RunReduceThread[numberOfReduces];
+		for (int i=0 ; i<numberOfReduces; i++) {
+			try {
+				Format readerCourant = new FormatImpl(inputFormat, 0, inputFname + "_part" + i);
+				Format writerCourant = new FormatImpl(outputFormat,  0, outputFname + "-tmp_part" + i);
+
+				CallBack cb = new CallBackImpl(i);
+				listeCallBack.put(i, cb);
+
+
+				//recuperation de l'objet
+				//Daemon daemon = (Daemon) Naming.lookup("//localhost:4000/Daemon"+i);
+				//Daemon daemon = (Daemon) Naming.lookup("//" + daemons.get(i-1) + ":4000/Daemon"+i);
+
+				// appel de RunMap
+				tr[i] = new RunReduceThread(daemons.get(i), mr, readerCourant, writerCourant, cb);
+				tr[i].start();
+
+			} catch (Exception ex) {
+					ex.printStackTrace();
+			}
+		}
+		/*Format readerRes = new FormatImpl(outputFormat, 0, outputFname + "-tmp");
 		Format writerRes = new FormatImpl(outputFormat, 0, outputFname);
 		readerRes.open(Format.OpenMode.R);
 		writerRes.open(Format.OpenMode.W);
 		mr.reduce(readerRes, writerRes);
 		readerRes.close();
-		writerRes.close();
+		writerRes.close();*/
 	}
 	
-	private void initDaemons() throws IOException {
+	private void initDaemons() throws IOException, NotBoundException {
 		BufferedReader reader = new BufferedReader(new FileReader(new File(configDaemons)));
-		this.daemons = new ArrayList<String>();
+		this.daemonsString = new ArrayList<String>();
+		this.daemons = new ArrayList<Daemon>();
 	    String line;
+	    int i = 1;
 	    while ((line = reader.readLine()) != null) {
-	    	  daemons.add(line);
+	    	  daemonsString.add(line);
+	    	  Daemon daemon = (Daemon) Naming.lookup("//" + line + ":4000/Daemon"+i);
+	    	  daemons.add(daemon);
+	    	  i++;
 	    }
 	    reader.close();
 	}

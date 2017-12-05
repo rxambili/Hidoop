@@ -44,7 +44,12 @@ public interface JobInterface {
      */
     public void setInputFname(String fname);
 //    public void setOutputFname(String fname);
-//    public void setSortComparator(SortComparator sc);
+    
+    /**
+     * Modifie le comparateur
+     * @param fname comparateur
+     */
+    public void setSortComparator(SortComparator sc);
     
     /**
      * Retourne le nombre de reduces.
@@ -81,7 +86,13 @@ public interface JobInterface {
      * @return nom du fichier resultat
      */
     public String getOutputFname();
-//    public SortComparator getSortComparator();
+    
+    
+    /**
+     * Retourne le comparateur
+     * @return comparateur
+     */
+    public SortComparator getSortComparator();
     
     /**
      * Lance le map/reduce.
