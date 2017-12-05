@@ -7,6 +7,11 @@ import java.io.Serializable;
  *
  */
 public interface Format extends FormatReader, FormatWriter, Serializable {
+	
+	public static final String SUFFIXE_res = "-res";
+	public static final String SUFFIXE_tmp = "-tmp";
+	public static final String SUFFIXE_part = "_part";
+	
 	/** Les differents types de format.	 */
     public enum Type { LINE, KV };
     

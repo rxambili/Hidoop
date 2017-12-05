@@ -10,11 +10,13 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 
 import formats.Format;
+import formats.FormatDistant;
 import formats.FormatLocal;
 import hdfs.HdfsClient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Classe Job implemente JobInterface.
@@ -27,8 +29,8 @@ public class Job implements JobInterface {
 
 
 	//private static final String listeMachine[] = {"yoda.enseeiht.fr", "vador.enseeiht.fr", "aragorn.enseeiht.fr", "gandalf.enseeiht.fr"};
-	private ArrayList<String> daemonsString;
-	private ArrayList<Daemon> daemons;
+	private List<String> daemonsString;
+	private List<Daemon> daemons;
 	private final static String configDaemons = "../config/daemons.txt";
 
 	/** Nombre de reduces. */
@@ -91,7 +93,7 @@ public class Job implements JobInterface {
 	
 	public void setInputFname(String fname) {
 		this.inputFname = fname;
-		this.outputFname = fname + "-res";
+		this.outputFname = fname + Format.SUFFIXE_res;
 	}
 
 	
@@ -146,11 +148,12 @@ public class Job implements JobInterface {
 	 */
 	public void startJob(MapReduce mr) {
 		//HdfsClient.HdfsWrite(inputFormat, inputFname, numberOfMaps);
+		List<String> reduceNodes = daemonsString.subList(0, 1);
 		RunMapThread tm[] = new RunMapThread[numberOfMaps];
 		for (int i=0 ; i<numberOfMaps; i++) {
 			try {
-				Format readerCourant = new FormatLocal(inputFormat, 0, inputFname + "_part" + i);
-				Format writerCourant = new FormatLocal(outputFormat,  0, outputFname + "-tmp_part" + i);
+				Format readerCourant = new FormatLocal(inputFormat, 0, inputFname + Format.SUFFIXE_part + i);
+				Format writerCourant = new FormatDistant(outputFormat,  0, reduceNodes, sortComparator);
 
 				CallBack cb = new CallBackImpl(i);
 				listeCallBack.put(i, cb);
@@ -170,7 +173,6 @@ public class Job implements JobInterface {
 		}
 
 
-		// a modifier si duplication de machine
 		for (int i=0 ; i<numberOfMaps; i++) {
 			try {
 				tm[i].join();
@@ -179,12 +181,12 @@ public class Job implements JobInterface {
 				e.printStackTrace();
 			}
 		}
-		//HdfsClient.HdfsRead(outputFname + "-tmp", outputFname + "-tmp", this.numberOfMaps);
+		//HdfsClient.HdfsRead(outputFname + Format.SUFFIXE_tmp, outputFname + Format.SUFFIXE_tmp, this.numberOfMaps);
 		RunReduceThread tr[] = new RunReduceThread[numberOfReduces];
 		for (int i=0 ; i<numberOfReduces; i++) {
 			try {
-				Format readerCourant = new FormatLocal(inputFormat, 0, inputFname + "_part" + i);
-				Format writerCourant = new FormatLocal(outputFormat,  0, outputFname + "-tmp_part" + i);
+				Format readerCourant = new FormatLocal(inputFormat, 0, gjd);
+				Format writerCourant = new FormatLocal(outputFormat,  0, outputFname + Format.SUFFIXE_tmp + Format.SUFFIXE_part + i);
 
 				CallBack cb = new CallBackImpl(i);
 				listeCallBack.put(i, cb);
@@ -202,7 +204,7 @@ public class Job implements JobInterface {
 					ex.printStackTrace();
 			}
 		}
-		/*Format readerRes = new FormatImpl(outputFormat, 0, outputFname + "-tmp");
+		/*Format readerRes = new FormatImpl(outputFormat, 0, outputFname + Format.SUFFIXE_tmp);
 		Format writerRes = new FormatImpl(outputFormat, 0, outputFname);
 		readerRes.open(Format.OpenMode.R);
 		writerRes.open(Format.OpenMode.W);

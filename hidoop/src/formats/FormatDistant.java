@@ -1,14 +1,22 @@
 package formats;
 
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import ordo.SortComparator;
 
 /**
  * Classe FormatImpl implemente l'interface Format.
@@ -26,11 +34,11 @@ public class FormatDistant implements Format {
   	/** Nom du fichier. */
   	private String fname;
   	/** Stockage de node de reduce */
-  	private HashMap<String, String>  nodeReduce;
-	
-	private File fichier;      // fichier de nom fname
-	private BufferedReader br; // pour la lecture de fichier
-	private BufferedWriter bw; // pour l'ecriture de fichier
+  	//private HashMap<String, String>  nodeReduce;
+  	private List<String> nodes;
+  	private List<BufferedWriter> bws;
+  	private List<Socket> sockets;
+  	private SortComparator sc;
 
 	/**
 	 * Constructeur de FormatImpl.
@@ -38,66 +46,34 @@ public class FormatDistant implements Format {
 	 * @param index index initial
 	 * @param fname nom du fichier
 	 */
-  	public FormatDistant (Format.Type type, long index, String fname) {
+  	public FormatDistant (Format.Type type, long index, List<String> daemonsString, SortComparator sc) {
     		this.type = type;
     		this.index = index;
-    		this.fname = fname;
-    		this.nodeReduce = new HashMap<String,String>();
-    		this.nodeReduce.put("am", "//yoda:4000/Daemon");
-		    this.nodeReduce.put("am", "//vador:4000/Daemon");
+    		this.nodes = daemonsString;
+    		this.sc = sc;
+    		//this.nodeReduce.put("am", "//yoda:4000/Daemon");
+		    //this.nodeReduce.put("am", "//vador:4000/Daemon");
   	}
 
   	public void open(OpenMode mode) {
-		this.fichier = new File(fname);
-		this.fichier.setExecutable(false);
-		if (mode == Format.OpenMode.R) {
-			// mode lecture
-			this.fichier.setReadable(true);
-			this.fichier.setWritable(false);
-			try {
-				this.br = new BufferedReader(new FileReader(fichier));
+  		/* Ouverture de la connexion sur un socket */
+  		for (String node : nodes) {
+  			try {
+				Socket s = new Socket(InetAddress.getByName(node), 4444);
+				sockets.add(s);
+				bws.add(new BufferedWriter(new OutputStreamWriter(s.getOutputStream())));
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else {
-			// mode ecriture
-			try {
-				this.fichier.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			this.fichier.setReadable(true);
-			this.fichier.setWritable(true);
-			try {
-				this.bw = new BufferedWriter(new FileWriter(fichier));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+  		}
   	}
 	
 	public KV read() {
-		KV kv = null;
-		try {
-			if (this.type == Format.Type.LINE) {
-				// format ligne
-				String ligne = br.readLine();
-				if (ligne != null) {
-					kv = new KV(String.valueOf(index), ligne);
-				}
-			} else {
-				// format key-value
-				String ligne = br.readLine();
-				if (ligne != null) {
-					String[] parties = ligne.split(KV.SEPARATOR); // separation de la ligne en cle + valeur
-					kv = new KV(parties[0], parties[1]); // parties[0] : cle, parties[1] : valeur
-				}
-			}
-				this.index++; // incrementation de index (ligne courante dans le cas de la lecture)
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return kv;
+		return null;
 	}
 	
 	/**
@@ -105,6 +81,7 @@ public class FormatDistant implements Format {
 	 */
 	public void write(KV record) {
 		try {
+			BufferedWriter bw = this.shuffle(record);
 			if (this.type == Format.Type.KV) {
 				bw.write(record.k + KV.SEPARATOR + record.v, 0, record.k.length() + KV.SEPARATOR.length() + record.v.length()); // cle<->valeur
 				bw.newLine();
@@ -117,14 +94,26 @@ public class FormatDistant implements Format {
 		}
 	}
 	
+	public BufferedWriter shuffle(KV record) {
+		if (sc.compare(record.v, "m") < 0 ) {
+			return bws.get(0);
+		} else {
+			return bws.get(1);
+		}
+	}
+	
 	public void close() {
   		try {
-  			if (br != null){
-				br.close();
-			}
-			if (bw != null){
-				bw.close();
-			}
+  			for (BufferedWriter bw : bws) {
+  				if (bw != null) {
+  					bw.close();
+  				}
+  			}
+  			for (Socket s : sockets) {
+  				if (s != null) {
+  					s.close();
+  				}
+  			}
 
   		} catch (IOException e) {
 			e.printStackTrace();
