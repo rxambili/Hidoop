@@ -68,6 +68,8 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 		}
 		try {
 			Daemon daemon = new DaemonImpl();
+			ReduceInputWriterThread t = new ReduceInputWriterThread(4444);
+			t.start();
 			Naming.rebind("//localhost:4000/Daemon" + args[0], daemon);
 		} catch (RemoteException | MalformedURLException e) {
 			e.printStackTrace();

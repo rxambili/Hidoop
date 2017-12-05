@@ -18,12 +18,10 @@ import java.util.ArrayList;
 
 public class ReduceInputWriterThread extends Thread {
 	
-	ArrayList<String> daemons;
 	int port;
 	boolean finir;
 	
-	public ReduceInputWriterThread(ArrayList<String> d, int p) {
-		this.daemons = d;
+	public ReduceInputWriterThread(int p) {
 		this.port = p;
 		this.finir = false;
 	}
@@ -59,16 +57,15 @@ public class ReduceInputWriterThread extends Thread {
 
 					/* On lit le message qui arrive */
 				    br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-					String texte = br.readLine();
+					
 
 
 					/* ecrire texte dans fichier */
-					if (br != null) {
+					if (br != null && bw!= null) {
 	    				try {
-	    					while ((texte = br.readLine()) != null) {
-	    						bw.write(texte, 0, texte.length());
-	    						bw.newLine();
-	    					}
+	    					String texte = br.readLine();
+	    					bw.write(texte, 0, texte.length());
+	    					bw.newLine();
 	    					br.close();
 	    				} catch (IOException e) {
 	    					e.printStackTrace();
