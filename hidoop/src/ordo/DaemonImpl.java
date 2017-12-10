@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
 
 import map.MapReduce;
 import map.Mapper;
@@ -81,10 +82,28 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 			ReduceInputWriterThread t = new ReduceInputWriterThread(4444, "Daemon" + args[0] );
 			t.start();
 			Naming.rebind("//localhost:4000/Daemon" + args[0], daemon);
+			boolean isClosed = false;
+			while (!isClosed) {
+				Scanner sc = new Scanner(System.in);
+				System.out.println("Saisir Commande :");
+				String str = sc.nextLine();
+				if (str.equals("exit")) {
+					t.fermer();
+					isClosed = true;
+					sc.close();
+					System.exit(0);
+				} else {
+					usage();
+				}
+			}
 		} catch (RemoteException | MalformedURLException e) {
 			e.printStackTrace();
 		}
 			
+	}
+
+	private static void usage() {
+		System.out.println("usage : exit | ...");		
 	}
 }
 

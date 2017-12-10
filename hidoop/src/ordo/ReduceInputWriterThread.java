@@ -18,9 +18,9 @@ import java.net.Socket;
 
 public class ReduceInputWriterThread extends Thread {
 	
-	int port;
-	boolean finir;
-	String nom;
+	private int port;
+	private boolean finir;
+	private String nom;
 	
 	public ReduceInputWriterThread(int p, String n) {
 		this.port = p;
@@ -48,14 +48,11 @@ public class ReduceInputWriterThread extends Thread {
 
 				/* Ouverture d'un socket d'écoute sur le pour port */
 				ServerSocket s = new ServerSocket(this.port);
-
-				/* Compteur du nombre de connexions effectuée */
-				//int compteurCo = 1;
-
+				Socket socket = null;
 				/* Tant qu'il y a des connexions, on les traite */
-				while (true) {
+				while (!finir) {
 					/* On accepte la connexion dans condition */
-					Socket socket = s.accept();
+					socket = s.accept();
 
 					/* On lit le message qui arrive */
 				    br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -73,17 +70,17 @@ public class ReduceInputWriterThread extends Thread {
 	    					e.printStackTrace();
 	    				}
 	    			}
-					
-					// sortie
-					if (this.finir) {
-						break;
-					}
-					
 				}
 
 				/* Fermeture des canaux réseau */
 				// ... .close();
+				bw.close();
+				if (socket != null) {
+					socket.close();
+				}
 				s.close();
+				
+				
 
 			} catch (Exception e) {
 				System.out.println(e);
@@ -94,6 +91,10 @@ public class ReduceInputWriterThread extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void fermer() {
+		finir = true;
 	}
 
 }

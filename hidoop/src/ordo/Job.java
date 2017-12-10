@@ -57,6 +57,7 @@ public class Job implements JobInterface {
 		this.inputFormat = Format.Type.KV;
 		this.outputFormat = Format.Type.KV;
 		this.ArrayListeCallBack = new HashMap<Integer, CallBack>();
+		this.sortComparator = new SortComparatorImpl();
 		try {
 			initDaemons();
 			this.numberOfMaps = daemons.size();
@@ -153,7 +154,7 @@ public class Job implements JobInterface {
 		RunMapThread tm[] = new RunMapThread[numberOfMaps];
 		for (int i=0 ; i<numberOfMaps; i++) {
 			try {
-				Format readerCourant = new FormatLocal(inputFormat, 0, inputFname + Format.SUFFIXE_part + i);
+				Format readerCourant = new FormatLocal(inputFormat, 0, inputFname + Format.SUFFIXE_part + (i+1));
 				Format writerCourant = new FormatDistant(outputFormat,  0, reduceNodes, sortComparator);
 
 				CallBack cb = new CallBackImpl(i);
@@ -186,8 +187,8 @@ public class Job implements JobInterface {
 		RunReduceThread tr[] = new RunReduceThread[numberOfReduces];
 		for (int i=0 ; i<numberOfReduces; i++) {
 			try {
-				Format readerCourant = new FormatLocal(inputFormat, 0, "Daemon" + (i+1) + "_input_KV.txt");
-				Format writerCourant = new FormatLocal(outputFormat,  0, outputFname + Format.SUFFIXE_tmp + Format.SUFFIXE_part + i);
+				Format readerCourant = new FormatLocal(inputFormat, 0, "../data/Daemon" + (i+1) + "_input_KV.txt");
+				Format writerCourant = new FormatLocal(outputFormat,  0, outputFname + Format.SUFFIXE_tmp + Format.SUFFIXE_part + (i+1));
 
 				CallBack cb = new CallBackImpl(i);
 				ArrayListeCallBack.put(i, cb);

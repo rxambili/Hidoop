@@ -50,6 +50,8 @@ public class FormatDistant implements Format {
     		this.index = index;
     		this.nodes = daemonsString;
     		this.sc = sc;
+    		this.bws = new ArrayList<BufferedWriter>();
+    		this.sockets = new ArrayList<Socket>();
     		//this.nodeReduce.put("am", "//yoda:4000/Daemon");
 		    //this.nodeReduce.put("am", "//vador:4000/Daemon");
   	}
