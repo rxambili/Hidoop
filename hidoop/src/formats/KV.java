@@ -5,7 +5,9 @@
 
 package formats;
 
-public class KV {
+import java.io.Serializable;
+
+public class KV implements Serializable{
 
     public static final String SEPARATOR = "<->";
 

@@ -48,7 +48,7 @@ public class FormatLocal implements Format {
 		if (mode == Format.OpenMode.R) {
 			// mode lecture
 			this.fichier.setReadable(true);
-			this.fichier.setWritable(false);
+			this.fichier.setWritable(true);
 			try {
 				this.br = new BufferedReader(new FileReader(fichier));
 			} catch (IOException e) {

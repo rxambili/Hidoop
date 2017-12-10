@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.rmi.RemoteException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,6 +16,7 @@ import java.io.BufferedWriter;
 import java.util.HashMap;
 import java.util.ArrayList;
 
+import ordo.Daemon;
 import ordo.SortComparator;
 
 /**
@@ -34,9 +36,7 @@ public class FormatDistant implements Format {
   	private String fname;
   	/** Stockage de node de reduce */
   	//private HashMap<String, String>  nodeReduce;
-  	private ArrayList<String> nodes;
-  	private ArrayList<BufferedWriter> bws;
-  	private ArrayList<Socket> sockets;
+  	private ArrayList<Daemon> nodes;
   	private SortComparator sc;
 
 	/**
@@ -45,32 +45,29 @@ public class FormatDistant implements Format {
 	 * @param index index initial
 	 * @param fname nom du fichier
 	 */
-  	public FormatDistant (Format.Type type, long index, ArrayList<String> daemonsString, SortComparator sc) {
+  	public FormatDistant (Format.Type type, long index, String fname, ArrayList<Daemon> daemons, SortComparator sc) {
     		this.type = type;
     		this.index = index;
-    		this.nodes = daemonsString;
+    		this.nodes = daemons;
+    		for (int i=0; i<nodes.size(); i++) {
+    			FormatLocal f = new FormatLocal(type,index,fname+(i+1));
+    			try {
+    				nodes.get(i).initDistantFormat(f);
+    			} catch (RemoteException e) {
+    				e.printStackTrace();
+    			}
+    		}
     		this.sc = sc;
-    		this.bws = new ArrayList<BufferedWriter>();
-    		this.sockets = new ArrayList<Socket>();
-    		//this.nodeReduce.put("am", "//yoda:4000/Daemon");
-		    //this.nodeReduce.put("am", "//vador:4000/Daemon");
   	}
 
   	public void open(OpenMode mode) {
-  		/* Ouverture de la connexion sur un socket */
-  		for (String node : nodes) {
-  			try {
-				Socket s = new Socket(InetAddress.getByName(node), 4444);
-				sockets.add(s);
-				bws.add(new BufferedWriter(new OutputStreamWriter(s.getOutputStream())));
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+  		for (Daemon node : nodes) {
+			try {
+				node.distantOpen(mode);
+			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-  		}
+		}
   	}
 	
 	public KV read() {
@@ -81,43 +78,29 @@ public class FormatDistant implements Format {
 	 * Ecrit l'enregistrement du format correspondant e la key-value dans le fichier.
 	 */
 	public void write(KV record) {
+		Daemon node = this.shuffle(record);
 		try {
-			BufferedWriter bw = this.shuffle(record);
-			if (this.type == Format.Type.KV) {
-				bw.write(record.k + KV.SEPARATOR + record.v, 0, record.k.length() + KV.SEPARATOR.length() + record.v.length()); // cle<->valeur
-				bw.newLine();
-			} else if (this.type == Format.Type.LINE) {
-				bw.write(record.v);
-			}
-			this.index++; // incrementation de index (nombre de lignes dans le cas de l'ecriture)
-		} catch (IOException e) {
+			node.distantWrite(record);
+		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public BufferedWriter shuffle(KV record) {
-		if (sc.compare(record.v, "m") < 0 ) {
-			return bws.get(0);
+	public Daemon shuffle(KV record) {
+		if (sc.compare(record.k, "m") < 0 ) {
+			return nodes.get(0);
 		} else {
-			return bws.get(1);
+			return nodes.get(1);
 		}
 	}
 	
 	public void close() {
-  		try {
-  			for (BufferedWriter bw : bws) {
-  				if (bw != null) {
-  					bw.close();
-  				}
-  			}
-  			for (Socket s : sockets) {
-  				if (s != null) {
-  					s.close();
-  				}
-  			}
-
-  		} catch (IOException e) {
-			e.printStackTrace();
+		for (Daemon node : nodes) {
+			try {
+				node.distantClose();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		}
   	}
   

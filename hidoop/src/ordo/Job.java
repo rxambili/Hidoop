@@ -47,7 +47,7 @@ public class Job implements JobInterface {
 	/** Comparateur pour trier. */
 	private SortComparator sortComparator;
 
-	private HashMap<Integer, CallBack> ArrayListeCallBack;
+	private HashMap<Integer, CallBack> callbacks;
 	
 	/**
 	 * Constructeur de Job.
@@ -56,7 +56,7 @@ public class Job implements JobInterface {
 		this.numberOfReduces = 2;
 		this.inputFormat = Format.Type.KV;
 		this.outputFormat = Format.Type.KV;
-		this.ArrayListeCallBack = new HashMap<Integer, CallBack>();
+		this.callbacks = new HashMap<Integer, CallBack>();
 		this.sortComparator = new SortComparatorImpl();
 		try {
 			initDaemons();
@@ -147,18 +147,18 @@ public class Job implements JobInterface {
 	 * Le fichier source doit prealablement etre decouper en 4 parties.
 	 */
 	public void startJob(MapReduce mr) {
-		//HdfsClient.HdfsWrite(inputFormat, inputFname, numberOfMaps);
-		ArrayList<String> reduceNodes = new ArrayList<String>();
-		reduceNodes.add(daemonsString.get(0));
-		reduceNodes.add(daemonsString.get(1));
+
+		ArrayList<Daemon> reduceNodes = new ArrayList<Daemon>();
+		reduceNodes.add(daemons.get(0));
+		reduceNodes.add(daemons.get(1));
 		RunMapThread tm[] = new RunMapThread[numberOfMaps];
 		for (int i=0 ; i<numberOfMaps; i++) {
 			try {
 				Format readerCourant = new FormatLocal(inputFormat, 0, inputFname + Format.SUFFIXE_part + (i+1));
-				Format writerCourant = new FormatDistant(outputFormat,  0, reduceNodes, sortComparator);
+				Format writerCourant = new FormatDistant(outputFormat,  0, outputFname + Format.SUFFIXE_reduce, reduceNodes, sortComparator);
 
-				CallBack cb = new CallBackImpl(i);
-				ArrayListeCallBack.put(i, cb);
+				CallBack cb = new CallBackImpl(i+1);
+				callbacks.put(i+1, cb);
 
 
 				//recuperation de l'objet
@@ -187,11 +187,11 @@ public class Job implements JobInterface {
 		RunReduceThread tr[] = new RunReduceThread[numberOfReduces];
 		for (int i=0 ; i<numberOfReduces; i++) {
 			try {
-				Format readerCourant = new FormatLocal(inputFormat, 0, "../data/Daemon" + (i+1) + "_input_KV.txt");
+				Format readerCourant = new FormatLocal(outputFormat, 0, outputFname + Format.SUFFIXE_reduce + (i+1));
 				Format writerCourant = new FormatLocal(outputFormat,  0, outputFname + Format.SUFFIXE_tmp + Format.SUFFIXE_part + (i+1));
 
-				CallBack cb = new CallBackImpl(i);
-				ArrayListeCallBack.put(i, cb);
+				CallBack cb = new CallBackImpl(i+1);
+				callbacks.put(i+1, cb);
 
 
 				//recuperation de l'objet
@@ -204,6 +204,15 @@ public class Job implements JobInterface {
 
 			} catch (Exception ex) {
 					ex.printStackTrace();
+			}
+		}
+		
+		for (int i=0 ; i<numberOfReduces; i++) {
+			try {
+				tr[i].join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		

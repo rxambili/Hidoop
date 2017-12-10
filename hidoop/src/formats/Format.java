@@ -11,6 +11,7 @@ public interface Format extends FormatReader, FormatWriter, Serializable {
 	public static final String SUFFIXE_res = "-res";
 	public static final String SUFFIXE_tmp = "-tmp";
 	public static final String SUFFIXE_part = "_part";
+	public static final String SUFFIXE_reduce = "-reduce";
 	
 	/** Les differents types de format.	 */
     public enum Type { LINE, KV };

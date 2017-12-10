@@ -6,6 +6,8 @@ import java.rmi.RemoteException;
 import map.Mapper;
 import map.Reducer;
 import formats.Format;
+import formats.FormatLocal;
+import formats.KV;
 
 /**
  * Interface Daemon permettant l'execution repartie des maps.
@@ -33,4 +35,14 @@ public interface Daemon extends Remote {
 	 * @throws RemoteException
 	 */
 	public void runReduce(Reducer r, Format reader, Format writer, CallBack cb) throws RemoteException;
+	
+	public void distantOpen(Format.OpenMode mode) throws RemoteException;
+	
+	public void distantWrite(KV record) throws RemoteException;
+	
+	public KV distantRead() throws RemoteException;
+	
+	public void distantClose() throws RemoteException;
+	
+	public void initDistantFormat(FormatLocal f) throws RemoteException;
 }
