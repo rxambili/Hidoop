@@ -18,12 +18,9 @@ public class CallBackImpl extends UnicastRemoteObject implements CallBack {
         this.id = i;
     }
 
-    public void notifyMapFinished() throws RemoteException {
+    public void addMachineFinished() throws RemoteException {
         System.out.println("calcul fini pour map" + this.id);
-    }
-    
-    public void notifyReduceFinished() throws RemoteException {
-        System.out.println("calcul fini pour reduce" + this.id);
+        this.fini = true;
     }
 
     public boolean estFini() throws RemoteException{

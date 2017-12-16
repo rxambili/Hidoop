@@ -15,9 +15,7 @@ public interface CallBack extends Remote {
     //private String machine;
     //public CallBack() {
 
-    public void notifyMapFinished() throws RemoteException;
-    
-    public void notifyReduceFinished() throws RemoteException;
+    public void addMachineFinished() throws RemoteException;
 
     public boolean estFini() throws RemoteException;
 

@@ -1,15 +1,7 @@
 package ordo;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -21,8 +13,6 @@ import map.MapReduce;
 import map.Mapper;
 import map.Reducer;
 import formats.Format;
-import formats.FormatLocal;
-import formats.KV;
 
 /**
  * Classe DaemonImpl implemente l'interface Daemon.
@@ -31,9 +21,8 @@ import formats.KV;
  *
  */
 public class DaemonImpl extends UnicastRemoteObject implements Daemon {
-	
-	private FormatLocal distantFormat;
-	private int nbClients;
+
+	private ReduceInputWriterThread reduceInput;
 	
 	/**
 	 * Constructeur de DaemonImpl.
@@ -41,7 +30,6 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 	 */
 	protected DaemonImpl() throws RemoteException {
 		super();
-		nbClients = 0;
 	}
 
 	/**
@@ -57,41 +45,27 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 		writer.close();
 
 		// dire au client que c'est fini
-		cb.notifyMapFinished();
+		cb.addMachineFinished();
 	}
 
-	public void runReduce(Reducer r, Format reader, Format writer, CallBack cb) throws RemoteException {
+	public void runReduce(Reducer r, Format reader, Format writer, CallBack cb) {
 		reader.open(Format.OpenMode.R);
 		writer.open(Format.OpenMode.W);
 		r.reduce(reader, writer);
 		reader.close();
 		writer.close();
-		cb.notifyReduceFinished();
 	}
-	
-	public void distantOpen(Format.OpenMode mode) throws RemoteException {
-		this.distantFormat.open(mode);
-		this.nbClients++;
-		
+
+	public void initReduceInputWriter() {
+		this.reduceInput.init();
 	}
-	
-	public void distantWrite(KV record) throws RemoteException {
-		this.distantFormat.write(record);		
+
+	public ReduceInputWriterThread getReduceInput() {
+		return this.reduceInput;
 	}
-	
-	public KV distantRead() throws RemoteException {
-		return this.distantFormat.read();
-	}
-	
-	public void distantClose() throws RemoteException {
-		if (nbClients == 1) {
-			this.distantFormat.close();
-		}
-		this.nbClients--;
-	}
-	
-	public void initDistantFormat(FormatLocal f) throws RemoteException {
-		this.distantFormat = f;		
+
+	public void setReduceInput(ReduceInputWriterThread r) {
+		this.reduceInput = r;
 	}
 
 
@@ -110,17 +84,25 @@ public class DaemonImpl extends UnicastRemoteObject implements Daemon {
 		}
 		try {
 			
+			// recuperer hostname
+			//String hostName = null;
+		    //try {
+		    //  final InetAddress addr = InetAddress.getLocalHost();
+		    //  hostName = new String(addr.getHostName());
+		    //} catch(final Exception e) {
+		    //}
+			
 			Daemon daemon = new DaemonImpl();
-			//ReduceInputWriterThread t = new ReduceInputWriterThread(4444, "Daemon" + args[0] );
-			//t.start();
+			((DaemonImpl) daemon).setReduceInput(new ReduceInputWriterThread(4444, "Daemon" + args[0] ));
+			((DaemonImpl) daemon).getReduceInput().start();
 			Naming.rebind("//localhost:4000/Daemon" + args[0], daemon);
 			boolean isClosed = false;
-			Scanner sc = new Scanner(System.in);
-			while (!isClosed) {				
+			while (!isClosed) {
+				Scanner sc = new Scanner(System.in);
 				System.out.println("Saisir Commande :");
 				String str = sc.nextLine();
 				if (str.equals("exit")) {
-					//t.fermer();
+					((DaemonImpl) daemon).getReduceInput().fermer();
 					isClosed = true;
 					sc.close();
 					System.exit(0);

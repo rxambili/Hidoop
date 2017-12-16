@@ -21,27 +21,20 @@ public class ReduceInputWriterThread extends Thread {
 	private int port;
 	private boolean finir;
 	private String nom;
+	private BufferedWriter bw;
 	
 	public ReduceInputWriterThread(int p, String n) {
 		this.port = p;
 		this.finir = false;
 		this.nom = n;
+		this.bw = null;
 	}
 	
 	public void run() {
-		//FileInputStream fis = null;
-		BufferedWriter bw = null;
+
 		BufferedReader br = null;
-		try {
-			File fichier = new File("../data/" + nom + "_input_KV.txt");
-			fichier.createNewFile();
-			fichier.setReadable(true);
-			fichier.setWritable(true);
-	    	bw = new BufferedWriter(new FileWriter(fichier));
-	    } catch (IOException e) {
-				e.printStackTrace();
-	    }
-					
+		this.init();
+							
 		try {
 
 			/* Ouverture d'un socket d'écoute sur le pour port */
@@ -51,11 +44,11 @@ public class ReduceInputWriterThread extends Thread {
 			while (!finir) {
 				/* On accepte la connexion dans condition */
 				socket = s.accept();
-				System.out.println("connecton accept�");
+				System.out.println("connection accepte");
 				/* On lit le message qui arrive */
-			    br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			   	br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			    
-			    /* ecrire texte dans fichier */
+			   	/* ecrire texte dans fichier */
 				if (br != null && bw != null) {
     				try {
     					String texte = br.readLine();
@@ -63,6 +56,7 @@ public class ReduceInputWriterThread extends Thread {
     						System.out.println(texte);
     						bw.write(texte, 0, texte.length());
     						bw.newLine();
+						bw.flush();
     					} else {
     						System.out.println("contenu vide");
     					}
@@ -70,7 +64,7 @@ public class ReduceInputWriterThread extends Thread {
     				} catch (IOException e) {
     					e.printStackTrace();
     				}
-    			}
+    				}
 			}
 
 			/* Fermeture des canaux réseau */
@@ -89,5 +83,23 @@ public class ReduceInputWriterThread extends Thread {
 	public void fermer() {
 		finir = true;
 	}
+
+	public void init() {
+		try {
+			if (this.bw != null) {
+				this.bw.close();
+			}
+
+			File fichier = new File("../data/" + nom + "_input_KV.txt");
+			fichier.createNewFile();
+			fichier.setReadable(true);
+			fichier.setWritable(true);
+	    		bw = new BufferedWriter(new FileWriter(fichier));
+	   	} catch (IOException e) {
+			e.printStackTrace();
+	   	}
+
+	}
+
 
 }
